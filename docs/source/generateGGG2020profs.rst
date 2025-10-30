@@ -33,6 +33,8 @@ Again, simply change the path assigned to the ``home_directory`` variable and ru
 >>> python generate_GGG20202_atm_profs.py
 
 .. note::
+    This script will generate the ``.mod``, ``.vmr`` and ``map`` files (the latter in ``.txt`` format) and store them in their appropriate subdirectories inside           ``Astroclimes/atmosphere_profiles/GGG2020/fp/al/``.
+    For some reason, the subdirectory for the ``map`` files is not automatically created, so you must make sure the directory ``Astroclimes/atmosphere_profiles/GGG2020/fp/al/maps-vertical/`` already exists.
 
-  This script will generate the ``.mod``, ``.vmr`` and ``map`` files (the latter in ``.txt`` format) and store them in their appropriate subdirectories inside ``Astroclimes/atmosphere_profiles/GGG2020/fp/al/``.
-  For some reason, the subdirectory for the ``map`` files is not automatically created, so you must make sure the directory ``Astroclimes/atmosphere_profiles/GGG2020/fp/al/maps-vertical/`` already exists.
+The ``generate_GGG20202_atm_profs.py`` script is by default tailored to Calar Alto. If you wish to calculate atmospheric profiles for a different site, you must change the ``site`` variable, provided the site is among the TCCON site list (if it is not, you can simply add a custom site to the ``tccon_sites.py`` file found in ``Astroclimes/py-ginput/mod_maker/``), or alternatively
+change the options on the lines calling the ``run_ginput.py`` script from ``--site`` to ``--lat`` and ``--lon`` and specify the coordinates.
