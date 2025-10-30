@@ -1,10 +1,10 @@
-Welcome to Lumache's documentation!
+Welcome to the documentation for Astroclimes!
 ===================================
 
-**Lumache** (/lu'make/) is a Python library for cooks and food lovers
-that creates recipes mixing random ingredients.
-It pulls data from the `Open Food Facts database <https://world.openfoodfacts.org/>`_
-and offers a *simple* and *intuitive* API.
+**Astroclimes** is a synthetic transmission algorithm that can be used to measure the abundance of greenhouse gases in
+the Earth's atmosphere and to remove telluric lines from stellar spectra.
+
+Please cite `Fetzner Keniger et al. (2025) <https://academic.oup.com/rasti/article/doi/10.1093/rasti/rzaf041/8258953>` if you use Astroclimes in your research.
 
 Check out the :doc:`usage` section for further information, including
 how to :ref:`installation` the project.
