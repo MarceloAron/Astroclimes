@@ -2,9 +2,9 @@
 
 # -- Project information
 
-project = 'Lumache'
-copyright = '2021, Graziella'
-author = 'Graziella'
+project = 'Astroclimes'
+copyright = '2025, Fetzner Keniger'
+author = 'Marcelo Aron Fetzner Keniger'
 
 release = '0.1'
 version = '0.1.0'
