@@ -7,6 +7,6 @@ h5py>=3.12.1
 matplotlib>=3.9.2
 numpy>=1.26.4
 pandas>=2.2.2
-python>=3.9.23
+python>=3.9
 scipy>=1.13.1
 tqdm>=4.67.1
