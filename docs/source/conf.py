@@ -2,7 +2,7 @@
 
 # -- Project information
 
-project = 'Astroclimes'
+project = 'Astroclimes PEWDD'
 copyright = '2025, Fetzner Keniger'
 author = 'Marcelo Aron Fetzner Keniger'
 
