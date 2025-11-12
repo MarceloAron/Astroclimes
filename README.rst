@@ -1,4 +1,4 @@
-Welcome to the documentation for Astroclimes!
+Welcome to the Astroclimes GitHub!
 ===================================
 
 **Astroclimes** is a synthetic transmission algorithm that can be used to measure the abundance of greenhouse gases in
