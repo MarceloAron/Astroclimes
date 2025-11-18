@@ -18,6 +18,5 @@ Contents
 
 .. toctree::
 
-   usage
-   api
+   setup
    generateGGG2020profs
