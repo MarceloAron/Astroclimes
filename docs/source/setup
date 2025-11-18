@@ -1,6 +1,0 @@
-Setting up your run
-=====
-
-Currently, there are two main analyses that Astroclimes can carry out: the first is to fit telluric model spectra to a sample of spectroscopic observations 
-to find the best-fit values for the abundances of certain molecular species; the second is to use these best-fit telluric models to remove the telluric lines
-from this same sample of spectroscopic observations. There are two separate setup scripts that run each of the analyses.
