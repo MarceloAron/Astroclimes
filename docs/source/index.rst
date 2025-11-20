@@ -17,6 +17,6 @@ Contents
 
 .. toctree::
 
-   instrall_prerecs
+   install_prerecs
    generateGGG2020profs
    setup
