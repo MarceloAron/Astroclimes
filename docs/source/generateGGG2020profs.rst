@@ -1,14 +1,15 @@
+.. _genGGG2020profs:
 Generating atmospheric profiles using GGG2020
 =====
 
-.. _installation:
+.. _installginput:
 
 Installing Ginput
 ------------
 To generate the GGG2020 files, you need to be able to run Ginput. To install and learn how to use Ginput, see their `documentation <https://ginput.readthedocs.io/en/latest/>`_. 
 Astroclimes comes with its own installation of Ginput found in the directory ``py-ginput/`` which should work.
 
-.. _donwload:
+.. _donwloadGEOSFPfiles:
 
 Downloading the necessary auxiliary files
 ------------

@@ -12,7 +12,7 @@ The GitHub installation comes with all of the necessary Python scripts and some 
 
 1. One model emission line spectrum from `SKYCALC <https://www.eso.org/observing/etc/bin/gen/form?INS.MODE=swspectr+INS.NAME=SKYCALC>`_.
 2. A few PHOENIX model stellar spectra from the `Göttingen Spectral Library <https://phoenix.astro.physik.uni-goettingen.de/>`_. 
-3. Some GGG2020 atmospheric profiles computed with `ginput <https://ginput.readthedocs.io/en/latest/>`_. For details on how to generate these atmospheric profiles yourself, check :doc:`generateGGG2020profs`. 
+3. Some GGG2020 atmospheric profiles computed with `ginput <https://ginput.readthedocs.io/en/latest/>`_. For details on how to generate these atmospheric profiles yourself, check :ref:`genGGG2020profs`. 
 4. Publicly available `CARMENES  <https://carmenes.caha.es/>`_ observations of Tau Boo on the night of March 26th 2018, for which the atmospheric profiles were computed. 
 5. The files with the coefficients necessary to calculate the collision-induced absorption (CIA) for :math:`O_2` collisions with other atmospheric particles. If needed, other coefficients are available on the `HITRAN database <https://www.hitran.org/cia/>`_. 
 6. Some model planetary emission spectra computed with GENESIS (`Gandhi & Madhusudhan 2017 <https://ui.adsabs.harvard.edu/abs/2017MNRAS.472.2334G/abstract>`_) with differing water abundances.
@@ -46,4 +46,4 @@ Python packages pre-requisites:
   - scipy>=1.13.1
   - tqdm>=4.67.1
 
-Once you have installed all of the necessary scripts and auxiliary files, you may check out :doc:`setup`.
+Once you have installed all of the necessary scripts and auxiliary files, you may check out :ref:`setupruns`.
