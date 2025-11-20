@@ -9,11 +9,6 @@ from matplotlib import rc
 from mpl_toolkits.axes_grid1.inset_locator import mark_inset
 import corner
 
-# =====================================================================================
-# Scripts
-# =====================================================================================
-from gen_funcs import roundto1
-
 ## Color-blind friendly colors: blue, orange, green, pink, brown, purple, gray, red and yellow
 CBcols= ['#377EB8', '#FF7F00', '#4DAF4A',
 		 '#F781BF', '#A65628', '#984EA3',

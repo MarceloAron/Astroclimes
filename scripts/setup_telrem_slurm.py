@@ -156,17 +156,17 @@ if not os.path.isfile(main_telrem_directory+filename_telrem_SNR_PCA):
 	txt.close()
 
 ## Filename to store the MCMC results of each run (this is not the same MCMC as the results_mcmc.txt file from above!)
-filename_telrem_MCMC_results_AC = f'results_telrem_mcmc_ac_sf_{scale_factors[0]}.txt'
-filename_telrem_MCMC_results_PCA = f'results_telrem_mcmc_pca_nc_{nc_PCA}_sf_{scale_factors[0]}.txt'
+filename_telrem_MCMC_results_AC = main_telrem_directory+f'results_telrem_mcmc_ac_sf_{scale_factors[0]}.txt'
+filename_telrem_MCMC_results_PCA = main_telrem_directory+f'results_telrem_mcmc_pca_nc_{nc_PCA}_sf_{scale_factors[0]}.txt'
 
 ## Check if the MCMC results files exist and if not, creating them
-if not os.path.isfile(main_telrem_directory+filename_telrem_MCMC_results_AC):
-	txt = open(main_telrem_directory+filename_telrem_MCMC_results_AC, 'a')
+if not os.path.isfile(filename_telrem_MCMC_results_AC):
+	txt = open(filename_telrem_MCMC_results_AC, 'a')
 	txt.write("## Injected planet strength \t sf \t sf_error \t log_sf \t log_sf_error \t Kp (km/s) \t Kp_error (km/s) \t Vsys (km/s) \t Vsys_error (km/s) \t logp \t logp_error\n")
 	txt.close()
 
-if not os.path.isfile(main_telrem_directory+filename_telrem_MCMC_results_PCA):
-	txt = open(main_telrem_directory+filename_telrem_MCMC_results_PCA, 'a')
+if not os.path.isfile(filename_telrem_MCMC_results_PCA):
+	txt = open(filename_telrem_MCMC_results_PCA, 'a')
 	txt.write("## Injected planet strength \t nc_PCA \t sf \t sf_error \t log_sf \t log_sf_error \t Kp (km/s) \t Kp_error (km/s) \t Vsys (km/s) \t Vsys_error (km/s) \t logp \t logp_error\n")
 	txt.close()
 

@@ -398,15 +398,15 @@ def run_telrem(home_directory, MCMC_directory, atm_profs_directory, filename_mcm
 		
 		text = (f"{scale_factor:<5.2f} \t {SNR_inj_sig_pos:10.4f} \t {vRest[vRest_inj_sig_pos_idx]:10.4f} \t {kpVec[kpVec_inj_sig_pos_idx]:10.4f} \t " +
 				f"{SNR_max:10.4f} \t {vRest[vRest_max_idx]:10.4f} \t {kpVec[kpVec_max_idx]:10.4f}\n")
-		#txt = open(main_telrem_directory+filename_telrem_SNR_AC, 'a')
-		#txt.write(text)
-		#txt.close()
+		txt = open(filename_telrem_SNR_AC, 'a')
+		txt.write(text)
+		txt.close()
 
 		text =	(f"{scale_factor:<5.2f} \t {nc_PCA:<5.0f} \t {SNR_PCA_inj_sig_pos:10.4f} \t {vRest[vRest_inj_sig_pos_idx]:10.4f} \t {kpVec[kpVec_inj_sig_pos_idx]:10.4f} \t " +
 				 f"{SNR_PCA_max:10.4f} \t {vRest[vRest_max_idx_PCA]:10.4f} \t {kpVec[kpVec_max_idx_PCA]:10.4f}\n")
-		#txt = open(main_telrem_directory+filename_telrem_SNR_PCA, 'a')
-		#txt.write(text)
-		#txt.close()
+		txt = open(filename_telrem_SNR_PCA, 'a')
+		txt.write(text)
+		txt.close()
 		
 		## Running MCMCs to quantify how much Astroclimes and PCA change the injected planetary signal
 		
@@ -519,7 +519,7 @@ def run_telrem(home_directory, MCMC_directory, atm_profs_directory, filename_mcm
 					f"{Kp_f:10.4f} \t {u_Kp_f:6.4f} \t " +
 					f"{Vsys_f:10.4f} \t {u_Vsys_f:6.4f} \t " +
 					f"{logp_med:10.4f} \t {u_logp_med:10.4f}\n")
-			txt = open(main_telrem_directory+filename_telrem_MCMC_results_AC, 'a')
+			txt = open(filename_telrem_MCMC_results_AC, 'a')
 			txt.write(text)
 			txt.close()
 
@@ -558,10 +558,10 @@ def run_telrem(home_directory, MCMC_directory, atm_profs_directory, filename_mcm
 			## instead of giving them as parameters for the log_probability function (this saves up computational time)
 			temp_npy_lam = f'temp_lam_MCMC_PCA_nc_{nc_PCA}_sf_{scale_factor}x.npy'
 			temp_npy_res = f'temp_res_MCMC_PCA_nc_{nc_PCA}_sf_{scale_factor}x.npy'
-			np.save(temp_npy_res, all_nights_lam[:,0,:])
+			np.save(temp_npy_lam, all_nights_lam[:,0,:])
 			np.save(temp_npy_res, res_pca_wps)
 
-			fit_telrem.unpack_global_vars()
+			fit_telrem.unpack_global_vars(temp_npy_lam, temp_npy_res)
 
 			## Running the MCMC
 			with Pool(processes=n_CPUs) as pool:
@@ -587,7 +587,7 @@ def run_telrem(home_directory, MCMC_directory, atm_profs_directory, filename_mcm
 					old_tau = tau
 			taufile.close()
 
-			call(['rm', temp_npy_res])
+			call(['rm', temp_npy_lam])
 			call(['rm', temp_npy_res])
 
 			#sampler = funcs.get_mcmc_result(MCMC_telrem_directory_PCA)
@@ -632,7 +632,7 @@ def run_telrem(home_directory, MCMC_directory, atm_profs_directory, filename_mcm
 					f"{Kp_f_PCA:10.4f} \t {u_Kp_f_PCA:6.4f} \t " +
 					f"{Vsys_f_PCA:10.4f} \t {u_Vsys_f_PCA:6.4f} \t " +
 					f"{logp_med:10.4f} \t {u_logp_med:10.4f}\n")
-			txt = open(main_telrem_directory+filename_telrem_MCMC_results_PCA, 'a')
+			txt = open(filename_telrem_MCMC_results_PCA, 'a')
 			txt.write(text)
 			txt.close()
 		

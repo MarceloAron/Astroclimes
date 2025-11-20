@@ -27,7 +27,7 @@ N_A = 6.022*1e23	# Avogadro constant, in molecules/mole
 c = 299792458		# Speed of light, in m/s
 DU = 2.69*1e20		# Dobson unit, in molecules/m^2
 
-def run_main(atm_profs_directory, MCMC_directory, filename_mcmc_results, filename_em_line_spec, list_science_spectra, filename_site_values, include_stelmod, filename_stelmod_lam, filename_stelmod_spec, molecs, molecs_for_cia, free_molecs, spec_orders, instrument, R_instrument, stelpars, orbpars, scale_profs, vel_step, DMF_O2, n_CPUs=1):
+def run_main(atm_profs_directory, MCMC_directory, filename_mcmc_results, filename_em_line_spec, list_science_spectra, include_stelmod, filename_stelmod_lam, filename_stelmod_spec, molecs, molecs_for_cia, free_molecs, spec_orders, instrument, R_instrument, stelpars, orbpars, scale_profs, vel_step, DMF_O2, n_CPUs=1):
 
 	R_regrid = (c*1e-3)/vel_step	# Resolution of our regridded model 
 	if include_stelmod:
@@ -351,7 +351,7 @@ def run_main(atm_profs_directory, MCMC_directory, filename_mcmc_results, filenam
 				f"{final_X_vals[3]:10.4f} \t {final_X_uncs[3]:6.4f} \t " +
 				f"{final_X_vals[4]:10.4f} \t {final_X_uncs[4]:6.4f} \t " +
 				f"{logp_med:10.4f} \t {u_logp_med:10.4f}\n")
-		txt = open(MCMC_directory+filename_mcmc_results, 'a')
+		txt = open(filename_mcmc_results, 'a')
 		txt.write(text)
 		txt.close()
 

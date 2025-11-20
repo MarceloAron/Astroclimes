@@ -126,9 +126,9 @@ def get_obs_cube(nord, nwav, filenames_spectra, instrument='CARMENES', generate=
 
 		return all_nights_lam, all_nights_spec
 
-def get_mod_cube(nord, nwav, filenames_spectra, MCMC_directory, atm_profs_directory, filename_results, filename_site_values, molecs, molecs_for_cia, instrument='CARMENES', R_instrument=80400, generate=True, save_dirname='../'):
+def get_mod_cube(nord, nwav, filenames_spectra, MCMC_directory, atm_profs_directory, filename_mcmc_results, molecs, molecs_for_cia, instrument='CARMENES', R_instrument=80400, generate=True, save_dirname='../'):
 	if generate:
-		ground_CO2, u_ground_CO2, ground_CH4, u_ground_CH4, ground_H2O, u_ground_H2O, ground_O2, u_ground_O2, X_CO2, u_X_CO2, X_CH4, u_X_CH4, X_H2O, u_X_H2O = np.loadtxt(filename_results, usecols=(1,2,3,4,5,6,7,8,11,12,13,14,15,16), unpack=True)
+		ground_CO2, u_ground_CO2, ground_CH4, u_ground_CH4, ground_H2O, u_ground_H2O, ground_O2, u_ground_O2, X_CO2, u_X_CO2, X_CH4, u_X_CH4, X_H2O, u_X_H2O = np.loadtxt(filename_mcmc_results, usecols=(1,2,3,4,5,6,7,8,11,12,13,14,15,16), unpack=True)
 
 		hdr_obs, all_lam_obs, all_spec_obs = funcs.get_spectral_data(filenames_spectra[0], instrument=instrument, clean_NaNs=False)
 		
@@ -290,9 +290,9 @@ def create_planet_signal(all_nights_lam, filename_planet_lam, filename_planet_fl
 
 	if generate:
 		## Unpacking the wavelength and flux of the model planetary signal
-		ll = np.loadtxt(filename_planet_lam, skiprows=1)
-		ll = ll*1e-6	## Converting from microns to m
-		F_planet = np.loadtxt(filename_planet_flux, skiprows=1)
+		ll = np.loadtxt(filename_planet_lam, skiprows=1) 		# In micron
+		ll = ll*1e-6											# Converting from microns to m
+		F_planet = np.loadtxt(filename_planet_flux, skiprows=1) # In W m^-2 m^-1
 
 		## Regridding the wavelength so it has constant Delta_lambda/lambda (resolution here needs to be high)
 		vel_step = (c*1e-3)/500000

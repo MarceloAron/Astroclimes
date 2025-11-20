@@ -12,7 +12,6 @@ import time
 # Scripts
 # =====================================================================================
 import funcs
-import gen_funcs
 
 def unpack_global_vars(temp_npy_file):
 	#lam_obs, spec_obs, R_regrid, R_obs, lam_model, molecs, molecs_cia, Cn_atm, int_cross_secs, int_cia, tau_rayleigh, tau_aerosol, norm_mask, norm_window_sizes, cutoff_mask, stellar_spectra, free_molecs, free_molec_profiles

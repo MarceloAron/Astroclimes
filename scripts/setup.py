@@ -18,7 +18,7 @@ import objects
 '''
 
 ## Specify number of CPUs to use
-n_CPUs = 6
+n_CPUs = 1
 
 ## Define your home directory
 #home_directory = '/home/marceloaron/MarceloAron/PhD/thesis_work/Astroclimes/'
@@ -56,7 +56,6 @@ obs_directory = '/home/marceloaron/MarceloAron/PhD/thesis_work/Astroclimes/data/
 ## other instruments might have different file name conventions
 list_science_spectra = glob.glob(obs_directory+'*nir_A.fits')
 list_science_spectra.sort()
-list_science_spectra = list_science_spectra[:1]
 
 ## Pick your instrument (must supply its resolution)
 instrument = 'CARMENES'

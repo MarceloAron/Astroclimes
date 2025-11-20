@@ -10,13 +10,11 @@ from scipy import interpolate
 import h5py
 import emcee
 import copy
-#import time
 
 # =====================================================================================
 # Scripts
 # =====================================================================================
 import plots
-import gen_funcs
 
 ## Some constants
 kB = 1.380649*1e-23	# Boltzmann constant, in m^2 kg s^-2 K^-1
