@@ -1,7 +1,7 @@
 Getting started with Astroclimes
 =====
 
-.. _installation:
+.. _ACinstallation:
 Installation
 -----
 To install Astroclimes, simply clone the `GitHub <https://github.com/MarceloAron/Astroclimes>`_ repository using:
@@ -19,10 +19,10 @@ The GitHub installation comes with all of the necessary Python scripts and some 
 
 Due to their large file size, the molecular cross_sections for line-by-line absorption are not included in the GitHub repository, but can be downloaded from `Google Drive <https://drive.google.com/drive/folders/1Awtc4UlRM1GR_sOg3eOVMGlF5WyD3Wue?usp=sharing>`_. Cross-sections for other molecules not included may be provided upon request. 
 
-.. _prerequisites:
+.. _ACprerequisites:
 Pre-requisites
 -----
-Before running Astroclimes, make sure you have all of the necessary Python packages installed, which are listed below. The minimum Python version recommended is 3.9. This can be done with ``conda`` environments. If you have Anaconda installed in your machine, you may do so by running:
+Before running Astroclimes, make sure you have all of the necessary Python packages installed, which are listed below. The minimum recommended Python version is 3.9. This can be done with ``conda`` environments. If you have Anaconda installed in your machine, you may do so by running:
 
 >>> conda create --name <my_env> python=3.9
 

@@ -6,7 +6,7 @@ Currently, there are two main analyses that Astroclimes can carry out: the first
 
 Run to find best-fit molecular abundance values
 -----
-``setup.py`` will run ``main.py``, which will loop over the list of spectroscopic observations and run an MCMC to find the best-fit abundance values for the selected molecules. To learn about the step-by-step of how ``main.py`` works, check [INCLUDE REFERENCE HERE]. Before running ``setup.py``, there are a number of variables inside it that you need to specify, which are listed and explained below:
+``setup.py`` will run ``main.py``, which will loop over the list of spectroscopic observations and run an MCMC to find the best-fit abundance values for the selected molecules. Before running ``setup.py``, there are a number of variables inside it that you need to specify, which are listed and explained below:
 
 	:guilabel:`n_CPUs` = 
 	number of CPUs to use (choose more than 1 if you wish to use multiprocessing in the MCMC).
@@ -33,7 +33,7 @@ Run to find best-fit molecular abundance values
 	list containing the file names of the spectroscopic observations to be analysed.
 
 	:guilabel:`instrument` = 
-	string containing the instrument name. Current instruments supported are: CARMENES (NIRPS and ESPRESSO in prep.). For a guide on how to tailor Astroclimes to your specific instrument, check [INCLUDE REFERENCE HERE].
+	string containing the instrument name. Current instruments supported are: CARMENES (NIRPS and ESPRESSO in prep.).
 
 	:guilabel:`R_instrument` = 
 	resolution of the selected instrument.
@@ -110,7 +110,7 @@ In its current version, ``setup_telrem.py`` will do more than just remove tellur
 	list containing the file names of the spectroscopic observations to be analysed.
 
 	:guilabel:`instrument` = 
-	string containing the instrument name. Current instruments supported are: CARMENES (NIRPS and ESPRESSO in prep.). For a guide on how to tailor Astroclimes to your specific instrument, check [INCLUDE REFERENCE HERE].
+	string containing the instrument name. Current instruments supported are: CARMENES (NIRPS and ESPRESSO in prep.).
 
 	:guilabel:`R_instrument` = 
 	resolution of the selected instrument.
