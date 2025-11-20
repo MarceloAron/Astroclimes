@@ -1,4 +1,3 @@
-(gen-ggg2020-profs)=
 Generating atmospheric profiles using GGG2020
 =====
 
