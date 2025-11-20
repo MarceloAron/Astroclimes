@@ -161,8 +161,8 @@ for nc_PCA in [1,2,3,4,5,6,10]:
 		all_nights_spec_mod = pca_functions.get_mod_cube(n_orders, n_pixels, list_science_spectra, MCMC_directory, atm_profs_directory, filename_mcmc_results, molecs, molecs_for_cia, generate=True, save_dirname=main_telrem_directory)
 
 	## Specify filenames where the planet model wavelength and flux are kept (models here come from GENESIS code from Gandhi & Madhusudhan 2017)
-	filename_planet_lam = home_directory+'telluric_removal/planet_models/lam.txt'
-	filename_planet_flux = home_directory+'telluric_removal/planet_models/h2o_-3.0_ch4_-20.0_hcn_-20.0.txt'
+	filename_planet_lam = home_directory+'telluric_removal/planet_models/lam.txt' 							# Wavelength in micron
+	filename_planet_flux = home_directory+'telluric_removal/planet_models/h2o_-3.0_ch4_-20.0_hcn_-20.0.txt' # Flux in W m^-2 m^-1 (W/m)
 
 	## Define stellar parameters through the StellarParams() object
 	stelpars = objects.StellarParams()

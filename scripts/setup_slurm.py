@@ -78,8 +78,8 @@ include_stelmod = True
 ## Define path to files containing the model stellar spectra wavelength and flux, respectively (the models used as default here have them in separate files)
 ## Here, we are using PHOENIX synthetic spectra from the Göttingen Spectral Library, available at https://phoenix.astro.physik.uni-goettingen.de/
 ## Download the template that best suits the star in question and also update the stellar parameters below
-filename_stelmod_lam = home_directory+'data/PHOENIX_SPECTRA/WAVE_PHOENIX-ACES-AGSS-COND-2011.fits'
-filename_stelmod_spec = home_directory+'data/PHOENIX_SPECTRA/lte06500-4.50+0.5.PHOENIX-ACES-AGSS-COND-2011-HiRes.fits'
+filename_stelmod_lam = home_directory+'auxiliary_files/PHOENIX_SPECTRA/WAVE_PHOENIX-ACES-AGSS-COND-2011.fits' 						# Wavelength given in Angstrom
+filename_stelmod_spec = home_directory+'auxiliary_files/PHOENIX_SPECTRA/lte06500-4.50+0.5.PHOENIX-ACES-AGSS-COND-2011-HiRes.fits'	# Flux given in erg s^-1 cm^-1
 
 ## List of desired molecules to include in the modelling
 molecs = ['CO2', 'CH4', 'H2O', 'O2', 'N2'] 		# Molecules included via line-by-line absorption
