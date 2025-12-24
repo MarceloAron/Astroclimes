@@ -64,7 +64,7 @@ def create_GEOS_FP_file_list(dates):
 		txt_asm_2D.write(f"https://portal.nccs.nasa.gov/datashare/gmao_ops/pub/fp/das/Y{sd.year}/M{sd.month:0>2}/D{sd.day:0>2}/GEOS.fp.asm.inst3_2d_asm_Nx.{sd.year}{sd.month:0>2}{sd.day:0>2}_{sd.hour:0>2}{sd.minute:0>2}.V01.nc4\n")
 
 ## Getting the list of dates for which GEOS-FP files are needed, from the observational spectra
-spec_file_list = glob.glob(home_directory+'Astroclimes/data/CARMENES/*-nir_A.fits') 
+spec_file_list = glob.glob('/media/marceloaron/New Volume/PhD/thesis_work/data/CARMENES/nir/HAT_P_11/*-nir_A.fits')#home_directory+'Astroclimes/data/CARMENES/*-nir_A.fits') 
 spec_file_list.sort()
 spec_dates = np.array([f.split('/')[-1].split('-')[1] for f in spec_file_list])
 create_GEOS_FP_file_list(spec_dates)

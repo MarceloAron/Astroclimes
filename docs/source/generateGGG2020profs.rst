@@ -8,7 +8,7 @@ The GGG pipeline is used by the Total Carbon Column Observing Network (TCCON) to
 Installing ginput
 ------------
 To install and learn how to use ginput, see their `documentation <https://ginput.readthedocs.io/en/latest/>`_. 
-Astroclimes comes with its own installation of ginput found in the directory ``py-ginput/``, which should work by simply copying it to your local repository.
+Astroclimes comes with its own installation of ginput found in the directory ``py-ginput/``, along with other necessary files inside the ``tccon/`` directory. This installation should work by simply copying it to your local repository, you just need to change the shebang pointing to the Python executable in the right conda environment and the default GGG2020 path on your .bashrc file.
 
 .. _donwloadGEOSFPfiles:
 

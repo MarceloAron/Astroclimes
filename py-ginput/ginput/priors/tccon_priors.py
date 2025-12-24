@@ -2993,6 +2993,7 @@ def generate_full_tccon_vmr_file(mod_data, utc_offsets, save_dir, product='fp', 
     extra_header = dict()
 
     std_vmr_file = _get_std_vmr_file(std_vmr_file)
+
     if std_vmr_file:
         std_vmr_gases = readers.read_vmr_file(std_vmr_file, lowercase_names=False, style='old')
         std_vmr_gases = list(std_vmr_gases['profile'].keys())
