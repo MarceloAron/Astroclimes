@@ -27,14 +27,15 @@ N_A = 6.022*1e23	# Avogadro constant, in molecules/mole
 c = 299792458		# Speed of light, in m/s
 DU = 2.69*1e20		# Dobson unit, in molecules/m^2
 
-def run_main(atm_profs_directory, MCMC_directory, filename_mcmc_results, filename_em_line_spec, list_science_spectra, include_stelmod, filename_stelmod_lam, filename_stelmod_spec, molecs, molecs_for_cia, free_molecs, spec_orders, instrument, R_instrument, stelpars, orbpars, scale_profs, vel_step, DMF_O2, n_CPUs=1):
+def run_main(atm_profs_directory, MCMC_directory, filename_mcmc_results, filename_em_line_spec, list_science_spectra, include_stelmod, filename_stelmod_lam, filename_stelmod_spec, molecs, molecs_for_cia, free_molecs, spec_orders, instrument, R_instrument, stelpars, orbpars, scale_profs, vel_step, DMF_O2, deep_line_threshold, n_CPUs=1):
 
 	R_regrid = (c*1e-3)/vel_step	# Resolution of our regridded model 
 	if include_stelmod:
 		## Unpacking and preparing the stellar model spectra to be used in the analysis
-		lam_stelmod, spec_stelmod = funcs.get_phoenix_spectra(filename_stelmod_lam, filename_stelmod_spec, vel_step)
-		lam_stelmod_broad, spec_stelmod_broad = funcs.broaden_phoenix_spectra(lam_stelmod, spec_stelmod, vel_step, stelpars.vsini, stelpars.eps)	# Broadening to include rotational broadening
-		lam_stelmod_broad, spec_stelmod_broad = funcs.inst_broaden_gauss(lam_stelmod_broad, spec_stelmod_broad, R_regrid, R_instrument)				# Broadening to include instrumental broadening
+		lam_stelmod, spec_stelmod = funcs.get_phoenix_spectra(filename_stelmod_lam, filename_stelmod_spec, regrid=True, vel_step=vel_step)
+		lam_stelmod_rot_broad, spec_stelmod_rot_broad = funcs.broaden_phoenix_spectra(lam_stelmod, spec_stelmod, vel_step, stelpars.vsini, stelpars.eps)	# Broadening to include rotational broadening
+		#lam_stelmod_inst_broad, spec_stelmod_inst_broad = funcs.inst_broaden_gauss(lam_stelmod, spec_stelmod, R_regrid, R_instrument)						# Broadening to include instrumental broadening
+		lam_stelmod_broad, spec_stelmod_broad = funcs.inst_broaden_gauss(lam_stelmod_rot_broad, spec_stelmod_rot_broad, R_regrid, R_instrument)				# Broadening to include instrumental broadening (on top of rotational broadening)
 
 	## Looping over all spectra
 	for filename_spectra in list_science_spectra:
@@ -148,13 +149,14 @@ def run_main(atm_profs_directory, MCMC_directory, filename_mcmc_results, filenam
 		
 		## Calculating the star's radial velocity on the observer's reference frame and shifting the model stellar spectra to said frame
 		phases = ((BJD - orbpars.T0)%orbpars.P)/orbpars.P 									# Orbital phases (for Tau Boo b!)
-		RV_star = orbpars.Vsys - V_BERV + orbpars.Ks*np.sin(2*np.pi*(phases+0.5)) 			# Phases are calculated for planet, so we add 0.5 to get star orbital phase
+		RV_star = orbpars.Vsys - V_BERV + orbpars.Ks*np.sin(2*np.pi*(phases+0.5)) 			# Phases are calculated for the planet, so we add 0.5 to get the star orbital phase
 		lam_stelmod_shift = lam_stelmod_broad*(1+RV_star/(c*1e-3))
 		
 		## Interpolating the model stellar spectra to the observational wavelength distribution
 		if include_stelmod:
 			spec_stelmod_int = [np.interp(lam_obs[i], lam_stelmod_shift, spec_stelmod_broad) for i in range(len(lam_obs))]
 			spec_stelmod_norm = [spec_stelmod_int[i]/np.max(spec_stelmod_int[i]) for i in range(len(spec_stelmod_int))]
+			#spec_stelmod_norm_2 = [spec_stelmod_int[i]/pd.Series(spec_stelmod_int[i]).rolling(window=int(0.2*len(spec_stelmod_int[i])), min_periods=1, center=True).median() for i in range(len(spec_stelmod_int))]
 		else:
 			spec_stelmod_norm = [np.ones(len(spec_obs[i])) for i in range(len(lam_obs))] 	## This will just define the model stellar spectra as an array of ones
 
@@ -170,14 +172,15 @@ def run_main(atm_profs_directory, MCMC_directory, filename_mcmc_results, filenam
 
 		## Computing the initial model spectra to save it and later compare it to the best-fit model spectra
 		mod_to_obs_spec_init = funcs.spec_handle(lam, lam_obs, int_cross_secs, int_cias, tau_rayleigh, tau_aerosol, Cn_atm, molecs, molecs_for_cia, R_regrid, R_instrument)
+		spec_mod_norm_init = funcs.normalise_spectra(lam_obs, mod_to_obs_spec_init, norm_mask, window_sizes_2, spec_orders)
 		spec_mod_init_with_stellar_lines = [mod_to_obs_spec_init[i]*spec_stelmod_norm[i] for i in range(len(mod_to_obs_spec_init))]
-		spec_mod_norm_init = funcs.normalise_spectra(lam_obs, spec_mod_init_with_stellar_lines, norm_mask, window_sizes_2, spec_orders)
+		spec_mod_norm_init_with_stellar_lines = funcs.normalise_spectra(lam_obs, spec_mod_init_with_stellar_lines, norm_mask, window_sizes_2, spec_orders)
 		
 		## Determining cutoff mask, which will remove points below a certain transmissivity from the calculation of the log likelihood
 		## This is done because we think the deep lines might be skewing the results
 		cutoff_mask = []
 		for spec_norm in spec_obs_norm:
-			cutoff_mask.append(spec_norm > 0.2)
+			cutoff_mask.append(spec_norm > deep_line_threshold)
 
 		## Setting up the MCMC	
 		profiles = []
@@ -217,7 +220,7 @@ def run_main(atm_profs_directory, MCMC_directory, filename_mcmc_results, filenam
 		## Saving the necessary parameters into a temporary .npy file so they can be unpacked at the start of the MCMC 
 		## instead of giving them as parameters for the log_probability function (this saves up computational time)
 		MCMC_glob_pars = np.array([lam_obs, spec_obs_norm, R_regrid, R_instrument, lam, molecs, molecs_for_cia, Cn_atm, int_cross_secs, int_cias, tau_rayleigh, tau_aerosol, norm_mask, window_sizes_2, cutoff_mask, spec_stelmod_norm, free_molecs, profiles], dtype=object)
-		temp_npy_file = f'temp_MCMC_{list_science_spectra.index(filename_spectra)}.npy' 
+		temp_npy_file = f"temp_MCMC_{filename_spectra.split('/')[-1].split('.')[0]}.npy"
 		np.save(temp_npy_file, MCMC_glob_pars, allow_pickle=True)
 
 		fit.unpack_global_vars(temp_npy_file)
@@ -246,7 +249,7 @@ def run_main(atm_profs_directory, MCMC_directory, filename_mcmc_results, filenam
 			taufile.close()
 
 		call(['rm', temp_npy_file])
-			
+		
 		#sampler = funcs.get_mcmc_result(dirname)
 		samples = sampler.get_chain()
 		logp = sampler.get_log_prob()
@@ -274,8 +277,8 @@ def run_main(atm_profs_directory, MCMC_directory, filename_mcmc_results, filenam
 		## Saving the molecular profiles (it becomes easier to generate the final models without having to rerun a bunch of stuff)
 		np.save(dirname+'Cn_atm_f.npy', Cn_atm_f, allow_pickle=True)
 
-		## From the new number density profiles (Cn_atm_f, which have the same shape as the old ones, just scaled),
-		## I calculate the final DMFs using a rearranged form of equation (9) from Laughner et al. (2023a)
+		## From the new number density profiles (Cn_atm_f, which have the same shape as the initial ones, just scaled),
+		## I calculate the final DMFs using a rearranged form of equation (9) from Laughner et al. (2023a) - these can have different shapes than the initial ones
 		Xs_atm_f = dict.fromkeys(molecs)
 		Sn_atm_f = dict.fromkeys(molecs)
 		Xs_atm_f['H2O'] = 1e6/(nideal/Cn_atm_f['H2O'] - 1)	## First I separately calculate the posterior H2O DMF, in ppm (hence the 1e6 factor!)
@@ -292,7 +295,7 @@ def run_main(atm_profs_directory, MCMC_directory, filename_mcmc_results, filenam
 		plots.plot_molecs_atm_prof([[hgt_atm, Xs_atm_f['CO2'], Xs_atm_f['CH4'], Xs_atm_f['H2O'], Xs_atm_f['O2'], Xs_atm_f['N2']]],
 							[''],
 							savefig=True, dirname=dirname, filename='molecs_atm_profile_f')
-
+		
 		## Now I will define some quantities necessary to make the chain and corner plots
 		Xs = 1e6*samples*(1+1e-6*Xs_atm_f['H2O'][-1])/nideal[-1]
 		Cn = np.einsum('ijk,kl->ijkl',samples, profiles)
@@ -301,6 +304,20 @@ def run_main(atm_profs_directory, MCMC_directory, filename_mcmc_results, filenam
 		Xs_flat = 1e6*flat_samples*(1+1e-6*Xs_atm_f['H2O'][-1])/nideal[-1]
 		Cn_flat = np.einsum('ik,kl->ikl',flat_samples, profiles)
 		Sn_flat = np.trapz(Cn_flat[:,:, ::-1], x=hgt_atm[::-1])/DU
+
+		H2O_index = mcmc_par_names.index('Cn_H2O')
+		H2O_prof_f = Xs_atm_f['H2O']/Xs_atm_f['H2O'][-1]
+	
+		for_PWV = np.einsum('ij,l->ijl',Xs[:,:,H2O_index], H2O_prof_f)
+		PWVs = np.zeros(shape=np.shape(Xs[:,:,H2O_index]))
+		for i in range(np.shape(PWVs)[0]):
+			for j in range(np.shape(PWVs)[1]):
+				PWVs[i,j] = funcs.get_PWV(hgt_atm, P_atm, T_atm, for_PWV[i,j,:])
+
+		for_PWV_flat = np.einsum('i,l->il',Xs_flat[:,H2O_index], H2O_prof_f)
+		PWVs_flat = np.zeros(len(Xs_flat[:,H2O_index]))
+		for i in range(len(PWVs_flat)):
+			PWVs_flat[i] = funcs.get_PWV(hgt_atm, P_atm, T_atm, for_PWV_flat[i,:])
 		
 		smps = np.concatenate((Xs, logp[:, :, np.newaxis]), axis=2)
 		flat_smps = np.concatenate((Xs_flat, logpflat[:, np.newaxis]), axis=1)
@@ -339,6 +356,11 @@ def run_main(atm_profs_directory, MCMC_directory, filename_mcmc_results, filenam
 
 		logp_med, u_logp_med = np.median(logpflat, axis=0), np.std(logpflat, axis=0)
 
+		final_PWV_val = np.median(PWVs_flat, axis=0)
+		final_PWV_unc = np.std(PWVs_flat, axis=0)
+		#final_PWV_val = funcs.get_PWV(hgt_atm, P_atm, T_atm, Xs_atm_f['H2O'])
+		#final_PWV_unc = funcs.get_PWV(hgt_atm, P_atm, T_atm, final_g_uncs[H2O_index]*np.ones(len(hgt_atm)))
+
 		text =	(f"{date_obs.value[:-4]:19s} \t " +
 				f"{final_g_vals[0]:10.4f} \t {final_g_uncs[0]:6.4f} \t " +
 				f"{final_g_vals[1]:10.4f} \t {final_g_uncs[1]:6.4f} \t " +
@@ -350,6 +372,7 @@ def run_main(atm_profs_directory, MCMC_directory, filename_mcmc_results, filenam
 				f"{final_X_vals[2]:10.4f} \t {final_X_uncs[2]:6.4f} \t " +
 				f"{final_X_vals[3]:10.4f} \t {final_X_uncs[3]:6.4f} \t " +
 				f"{final_X_vals[4]:10.4f} \t {final_X_uncs[4]:6.4f} \t " +
+				f"{final_PWV_val:10.4f} \t {final_PWV_unc:6.4f} \t " +
 				f"{logp_med:10.4f} \t {u_logp_med:10.4f}\n")
 		txt = open(filename_mcmc_results, 'a')
 		txt.write(text)
@@ -359,14 +382,15 @@ def run_main(atm_profs_directory, MCMC_directory, filename_mcmc_results, filenam
 		xlims = [[0.9675,0.9700], [0.9775,0.9800], [1.0060,1.0100], [1.0120,1.0130], [1.0325,1.0340], [1.0575,1.0600], [1.0675,1.0700], [1.0825,1.0850], [1.115,1.118], [1.125,1.128], [1.160,1.163], [1.1794,1.1799], [1.203,1.206], [1.210,1.213], [1.255,1.258], [1.279, 1.281], [1.305,1.311], [1.320,1.325], [1.345,1.350], [1.395,1.400], [1.425,1.432], [1.445,1.450], [1.485,1.490], [1.515,1.520], [1.5713,1.5718], [1.610,1.612], [1.655,1.660], [1.705,1.710]]
 		xlim = [xlims[x] for x in spec_orders]
 		mod_to_obs_spec = funcs.spec_handle(lam, lam_obs, int_cross_secs, int_cias, tau_rayleigh, tau_aerosol, Cn_atm_f, molecs, molecs_for_cia, R_regrid, R_instrument)
+		spec_mod_norm = funcs.normalise_spectra(lam_obs, mod_to_obs_spec, norm_mask, window_sizes_2, spec_orders)
 		spec_mod_with_stellar_lines = [mod_to_obs_spec[i]*spec_stelmod_norm[i] for i in range(len(mod_to_obs_spec))]
-		spec_mod_norm = funcs.normalise_spectra(lam_obs, spec_mod_with_stellar_lines, norm_mask, window_sizes_2, spec_orders)
+		spec_mod_norm_with_stellar_lines = funcs.normalise_spectra(lam_obs, spec_mod_with_stellar_lines, norm_mask, window_sizes_2, spec_orders)
 		for i in range(len(spec_orders)):
 			zoom = True
-			plots.plot_tel_lines(lam_obs[i]*1e6, [spec_obs_norm[i], spec_mod_norm_init[i], spec_mod_norm[i]], labels=['Obs. spectra', 'Initial model', 'Best-fit model'], zoom=zoom, xlim=xlim[i], cols=['gray', CBcols[0], CBcols[1]], savefig=True, dirname=dirname, filename=f'model_spectra_ord_{spec_orders[i]+1}')
+			plots.plot_tel_lines(lam_obs[i]*1e6, [spec_obs_norm[i], spec_mod_norm_init_with_stellar_lines[i], spec_mod_norm_with_stellar_lines[i]], labels=['Obs. spectra', 'Initial model', 'Best-fit model'], zoom=zoom, xlim=xlim[i], cols=['gray', CBcols[0], CBcols[1]], savefig=True, dirname=dirname, filename=f'model_spectra_ord_{spec_orders[i]+1}')
 			zoom = False
-			plots.plot_tel_lines(lam_obs[i]*1e6, [spec_obs_norm[i], spec_mod_norm_init[i], spec_mod_norm[i]], labels=['Obs. spectra', 'Initial model', 'Best-fit model'], zoom=zoom, xlim=xlim[i], cols=['gray', CBcols[0], CBcols[1]], savefig=True, dirname=dirname, filename=f'model_spectra_zoom_ord_{spec_orders[i]+1}')
-			at = (lam_obs[i]*1e6, spec_obs_norm[i], spec_mod_norm[i], spec_mod_norm_init[i])
+			plots.plot_tel_lines(lam_obs[i]*1e6, [spec_obs_norm[i], spec_mod_norm_init_with_stellar_lines[i], spec_mod_norm_with_stellar_lines[i]], labels=['Obs. spectra', 'Initial model', 'Best-fit model'], zoom=zoom, xlim=xlim[i], cols=['gray', CBcols[0], CBcols[1]], savefig=True, dirname=dirname, filename=f'model_spectra_zoom_ord_{spec_orders[i]+1}')
+			at = (lam_obs[i]*1e6, spec_obs_norm[i], spec_mod_norm[i], spec_mod_norm_init[i], spec_mod_norm_with_stellar_lines[i], spec_mod_norm_init_with_stellar_lines[i])
 			np.savetxt(dirname+f'spec_ord_{spec_orders[i]+1}.txt', np.vstack(at).T)
 
 		print(f"Progress: {list_science_spectra.index(filename_spectra)+1}/{len(list_science_spectra)}")

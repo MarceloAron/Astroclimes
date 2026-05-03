@@ -3,6 +3,9 @@ import numpy as np
 from scipy import interpolate
 import copy
 from scipy.interpolate import splrep, splev
+from astropy.time import Time
+import matplotlib.pyplot as plt
+from scipy import stats
 
 ## Scripts
 import funcs
@@ -16,8 +19,118 @@ c = 299792458		# Speed of light, in m/s
 DU = 2.69*1e20		# Dobson unit, in molecules/m^2
 h = 6.626e-34        # Planck's constant
 
-''' FULL PRINCIPAL COMPONENT ANALYSIS as in Giacobbe et al. (2021) '''
+## Color-blind friendly colors: blue, orange, green, pink, brown, purple, gray, red and yellow
+CBcols= ['#377EB8', '#FF7F00', '#4DAF4A',
+		 '#F781BF', '#A65628', '#984EA3',
+		 '#999999', '#E41A1C', '#DEDE00']
 
+def filter_bad_obs(nights, instruments, lists_science_spectra, n_orders, bad_spec_orders_idxs, filenames_site_values, filenames_mcmc_results, SNR_lims, airmass_lims, add_bad_obs, main_directory, P, T0, create_SNR_night_log=False, make_obs_conds_plot=False, plots_cols=CBcols):
+	## Before carrying on with the telluric line removal, we check for bad observations
+	SNRs_all_nights = []
+	airmasses_all_nights = []
+	rr_bad_obs_all_nights = []
+	bad_obs_idxs_all_nights = []
+	for ii in range(len(nights)):
+		## First, loop over the observational sample to get the measured instrumental SNR from each spectrum
+		if create_SNR_night_log:
+			txt = open(main_directory+f'night_logs_{nights[ii]}.txt', 'w')
+			txt.write('Date obs \t Target \t Exp time \t SNR (mean all orders excluding bad ones)\n')
+		SNRs = np.zeros(shape=(len(lists_science_spectra[ii]),n_orders[ii]))
+		for filename_spectra in lists_science_spectra[ii]:
+			## Getting all of the spectral data data (NaNs and infs are already removed)
+			hdr_obs, all_lam_obs, all_spec_obs = funcs.get_spectral_data(filename_spectra, instrument=instruments[ii])
+			## These header keys are specific for CARMENES, if you are dealing with another instrument, these might be different
+			for jj in range(n_orders[ii]):
+				SNRs[lists_science_spectra[ii].index(filename_spectra),jj] = 0.5*(hdr_obs[f'HIERARCH CARACAL FOX SNR {jj}']+hdr_obs[f'HIERARCH CARACAL FOX SNR {jj+n_orders[ii]}'])
+			SNRs_nobad_ords = np.delete(SNRs, bad_spec_orders_idxs[ii], axis=1)
+			SNRs_nobad_ords_mean = np.mean(SNRs_nobad_ords, axis=1)
+			if create_SNR_night_log:
+				tgt_name = hdr_obs['OBJECT']
+				date_obs = Time(hdr_obs['DATE-OBS'], format='isot', scale='utc')
+				exptime = hdr_obs['EXPTIME']
+				txt.write(f'{date_obs.value:>20} \t {tgt_name:15} \t {exptime:.2f}s \t {SNRs_nobad_ords_mean[lists_science_spectra[ii].index(filename_spectra)]:<6.2f}\n')
+		if create_SNR_night_log:
+			txt.close()
+
+		SNRs_all_nights.append(SNRs_nobad_ords_mean)
+		## Second, get the airmasses from the site_values.txt file
+		airmasses = np.loadtxt(filenames_site_values[ii], usecols=(9), unpack=True)
+
+		## Determine bad observations from their SNR and airmasses, whose limits are given as arguments to the function
+		rr_bad_obs = (SNRs_nobad_ords_mean < SNR_lims[ii]) | (airmasses > airmass_lims[ii])
+
+		## Manually adding any other observations deemed bad that were not included in the automatic flagging above
+		rr_bad_obs[add_bad_obs[ii]] = True
+
+		bad_obs_idxs = np.arange(len(lists_science_spectra[ii]))[rr_bad_obs]
+		print('Night:',nights[ii])
+		print('Orders removed:',np.array(bad_spec_orders_idxs[ii])+1)
+		print('Spectra removed:',bad_obs_idxs+1)
+
+		airmasses_all_nights.append(airmasses)
+		rr_bad_obs_all_nights.append(rr_bad_obs)
+		bad_obs_idxs_all_nights.append(bad_obs_idxs)
+
+	if make_obs_conds_plot:
+		## Plotting the airmass, relative humidity, PWV and instrument SNR over time, highlighting observations flagged as bad
+		fig = plt.figure(figsize=(8,6)) 
+		ax1 = plt.subplot2grid((4,1), (0,0), rowspan=1, colspan=1)
+		ax2 = plt.subplot2grid((4,1), (1,0), rowspan=1, colspan=1)
+		ax3 = plt.subplot2grid((4,1), (2,0), rowspan=1, colspan=1)
+		ax4 = plt.subplot2grid((4,1), (3,0), rowspan=1, colspan=1)
+
+		for ii in range(len(nights)):
+			BJD, rel_hum = np.loadtxt(filenames_site_values[ii], usecols=(4,7), unpack=True)
+			phases = ((BJD - T0)%P)/P
+			PWV, u_PWV = np.loadtxt(filenames_mcmc_results[ii], usecols=(21,22), unpack=True)
+
+			ax1.plot(phases, airmasses_all_nights[ii], 'o', mec=plots_cols[ii], mfc='None', label=f'Night {ii+1}')
+			ax1.plot(phases[rr_bad_obs_all_nights[ii]], airmasses_all_nights[ii][rr_bad_obs_all_nights[ii]], 'x', c='black')
+
+			ax2.plot(phases, rel_hum, 'o', mec=plots_cols[ii], mfc='None')
+			ax2.plot(phases[rr_bad_obs_all_nights[ii]], rel_hum[rr_bad_obs_all_nights[ii]], 'x', c='black')
+
+			ax3.errorbar(phases, PWV, yerr=u_PWV, fmt='o', mec=plots_cols[ii], mfc='None', zorder=4)
+			ax3.plot(phases[rr_bad_obs_all_nights[ii]], PWV[rr_bad_obs_all_nights[ii]], 'x', c='black', zorder=5)
+
+			ax4.plot(phases, SNRs_all_nights[ii], 'o', mec=plots_cols[ii], mfc='None')
+			ax4.plot(phases[rr_bad_obs_all_nights[ii]], SNRs_all_nights[ii][rr_bad_obs_all_nights[ii]], 'x', c='black')
+
+		ax1.legend(loc='best')
+		ax1.axhline(airmass_lims[0], ls='dashed', c='gray')
+		ax4.axhline(SNR_lims[0], ls='dashed', c='gray')
+
+		ax1.set_xticks([])
+		ax1.set_ylabel('Airmass', fontsize=14)
+		ax1.invert_yaxis()
+
+		ax2.set_xticks([])
+		ax2.set_ylim(30,102)
+		ax2.set_ylabel('Rel. hum. (\%)', fontsize=14)
+
+		ax3.set_xticks([])
+		#ax3.set_ylim(1,9)
+		ax3.set_ylabel('PWV (mm)', fontsize=14)
+
+		ax4.tick_params(axis='x', labelsize=14)
+		ax4.set_ylabel('Inst. SNR', fontsize=14)
+		ax4.set_xlabel('Orbital phase', fontsize=14)
+
+		fig.align_ylabels()
+		plt.tight_layout()
+		plt.subplots_adjust(hspace=0)
+		plt.savefig(main_directory+'snr_airmass_hum_pwv_dist.pdf', bbox_inches='tight')
+		plt.savefig(main_directory+'snr_airmass_hum_pwv_dist.jpeg', dpi=300, bbox_inches='tight')
+		#plt.show()
+		plt.close()
+
+	if len(bad_obs_idxs_all_nights) == 1:
+		return bad_obs_idxs_all_nights[0]
+	else:
+		return bad_obs_idxs_all_nights
+
+
+''' FULL PRINCIPAL COMPONENT ANALYSIS as in Giacobbe et al. (2021) '''
 def standardise_data(mat):
 	''' 
 	Standardise one order of data ('spec') before PCA. In IDL this would 
@@ -30,7 +143,8 @@ def standardise_data(mat):
 		# This is the biased stdev (normalised by nx rather than nx-1)
 		# It needs changing to match CORRELATE.pro
 		fStd[:,i] /= np.std(fStd[:,i])
-	## Instead of the for loop, could just do
+	
+	## Alternative
 	## fStd = (fIn - np.mean(fIn, axis=0))/np.std(fIn, axis=0)
 	return fStd
 
@@ -78,55 +192,55 @@ def clean_cube(mat):
 
 	return clean_mat, rra
 
-def run_pca(all_nights_lam, all_nights_spec, nc, generate=True, save_dirname='../'):
+def run_pca(all_lam, all_spec, nc, generate=True, save_dirname='../', save_filename='all_pca_fit'):
 	if generate:
 		## Running the PCA
-		nor, nobs, nwav = np.shape(all_nights_lam)
+		nor, nobs, nwav = np.shape(all_lam)
 		all_pca_fit = np.empty((0,nobs,nwav))
 		for n in range(nor):
 			## Cleaning up the data of NaN's and inf's for a certain order, as well as points with very low transmission
-			fIn, rra = clean_cube(all_nights_spec[n,:])
+			fIn, rra = clean_cube(all_spec[n,:])
 			fStd = standardise_data(fIn)
 			xMat = get_eigenv_via_PCA(fStd, nc)
 			pca_fit = linear_regression(xMat, fIn)
 			pca_full = np.ones(shape=(nobs,nwav))
 			pca_full[:,rra] = pca_fit
 			all_pca_fit = np.concatenate((all_pca_fit, pca_full[np.newaxis,:,:]), axis=0)
-		np.save(save_dirname+f'all_pca_fit_nc_{nc}.npy', all_pca_fit)
+		np.save(save_dirname+save_filename+f'_nc_{nc}.npy', all_pca_fit)
 
 		return all_pca_fit
 	else:
-		all_pca_fit = np.load(save_dirname+f'all_pca_fit_nc_{nc}.npy')
+		all_pca_fit = np.load(save_dirname+save_filename+f'_nc_{nc}.npy')
 
 		return all_pca_fit
 
-def get_obs_cube(nord, nwav, filenames_spectra, instrument='CARMENES', generate=True, save_dirname='../'):
+def get_obs_cube(nord, nwav, filenames_spectra, instrument='CARMENES', generate=True, save_dirname='../', save_lam_filename='all_lam', save_spec_filename='all_spec'):
 	if generate:
-		all_nights_lam = np.empty((nord,0,nwav))
-		all_nights_spec = np.empty((nord,0,nwav))
+		all_lam = np.empty((nord,0,nwav))
+		all_spec = np.empty((nord,0,nwav))
 
 		for filename_spectra in filenames_spectra:
 			## Getting all of the observational spectral data (NaNs and infs not removed)
 			hdr_obs, all_lam_obs, all_spec_obs = funcs.get_spectral_data(filename_spectra, instrument=instrument, clean_NaNs=False)
 			
 			## Concatenating this data to create a "cube" with all of the available observations, dimension (nOrders, nObs, nWavelength)
-			all_nights_lam = np.concatenate((all_nights_lam, all_lam_obs[:,np.newaxis]), axis=1)
-			all_nights_spec = np.concatenate((all_nights_spec, all_spec_obs[:,np.newaxis]), axis=1)
+			all_lam = np.concatenate((all_lam, all_lam_obs[:,np.newaxis]), axis=1)
+			all_spec = np.concatenate((all_spec, all_spec_obs[:,np.newaxis]), axis=1)
 			
 			print(f"Progress: {filenames_spectra.index(filename_spectra)+1}/{len(filenames_spectra)}")
 
-		np.save(save_dirname+'all_nights_lam.npy', all_nights_lam)
-		np.save(save_dirname+'all_nights_spec.npy', all_nights_spec)
+		np.save(save_dirname+save_lam_filename+'.npy', all_lam)
+		np.save(save_dirname+save_spec_filename+'.npy', all_spec)
 
 
-		return all_nights_lam, all_nights_spec
+		return all_lam, all_spec
 	else:
-		all_nights_lam = np.load(save_dirname+'all_nights_lam.npy')
-		all_nights_spec = np.load(save_dirname+'all_nights_spec.npy')
+		all_lam = np.load(save_dirname+save_lam_filename+'.npy')
+		all_spec = np.load(save_dirname+save_spec_filename+'.npy')
 
-		return all_nights_lam, all_nights_spec
+		return all_lam, all_spec
 
-def get_mod_cube(nord, nwav, filenames_spectra, MCMC_directory, atm_profs_directory, filename_mcmc_results, molecs, molecs_for_cia, instrument='CARMENES', R_instrument=80400, generate=True, save_dirname='../'):
+def get_mod_cube(nord, nwav, filenames_spectra, MCMC_directory, atm_profs_directory, filename_mcmc_results, molecs, molecs_for_cia, instrument='CARMENES', R_instrument=80400, generate=True, save_dirname='../', save_spec_mod_filename='all_spec_mod'):
 	if generate:
 		ground_CO2, u_ground_CO2, ground_CH4, u_ground_CH4, ground_H2O, u_ground_H2O, ground_O2, u_ground_O2, X_CO2, u_X_CO2, X_CH4, u_X_CH4, X_H2O, u_X_H2O = np.loadtxt(filename_mcmc_results, usecols=(1,2,3,4,5,6,7,8,11,12,13,14,15,16), unpack=True)
 
@@ -146,7 +260,7 @@ def get_mod_cube(nord, nwav, filenames_spectra, MCMC_directory, atm_profs_direct
 		R_regrid = (c*1e-3)/vel_step	# Resolution of our regridded model 
 		molecs_cross_secs = funcs.get_cross_secs_dic(molecs, lam_ranges, vel_step)
 
-		all_nights_spec_mod = np.empty((nord,0,nwav))
+		all_spec_mod = np.empty((nord,0,nwav))
 
 		for filename_spectra in filenames_spectra:
 			MCMC_directory_indiv = MCMC_directory+filename_spectra.split('/')[-1].split('.')[0]+'/'
@@ -180,25 +294,25 @@ def get_mod_cube(nord, nwav, filenames_spectra, MCMC_directory, atm_profs_direct
 
 			## Computing the model with the results from the MCMC
 			mod_to_obs_spec = funcs.spec_handle(lam, lam_obs, int_cross_secs, int_cias, c_rayleigh, c_aerosol, Cn_atm, molecs, molecs_for_cia, R_regrid, R_instrument)
-			all_nights_spec_mod = np.concatenate((all_nights_spec_mod, mod_to_obs_spec[:,np.newaxis]), axis=1)
+			all_spec_mod = np.concatenate((all_spec_mod, mod_to_obs_spec[:,np.newaxis]), axis=1)
 
 			print(f"Progress: {filenames_spectra.index(filename_spectra)+1}/{len(filenames_spectra)}")
 
-		all_nights_spec_mod = np.array(all_nights_spec_mod, dtype=float)
-		np.save(save_dirname+'all_nights_spec_mod.npy', all_nights_spec_mod, allow_pickle=True)
+		all_spec_mod = np.array(all_spec_mod, dtype=float)
+		np.save(save_dirname+save_spec_mod_filename+'.npy', all_spec_mod, allow_pickle=True)
 
-		return all_nights_spec_mod
+		return all_spec_mod
 	else:
-		all_nights_spec_mod = np.load(save_dirname+'all_nights_spec_mod.npy', allow_pickle=True)
+		all_spec_mod = np.load(save_dirname+save_spec_mod_filename+'.npy', allow_pickle=True)
 
-		return all_nights_spec_mod
+		return all_spec_mod
 
-def mask_cube(cube, mask_val, rule_cube=None, create_rule_cube=True):
+def mask_cube(cube, mask_val, rule_cube=None, create_rule_cube=True, deep_line_threshold=0.2):
 	'''
 	This function either creates a "rule cube" for an array of dimensions (nOrds, nObs, nWave), 
-	where the rule is True if points are finite and above 0.2, and then assigns a certain value 
-	("mask_val") to the points that are False. Alternatively, it simply masks the False values, 
-	if a rule cube is already provided.
+	where the rule is True if points are finite and above a certain threshold (calculated from the median), 
+	and then assigns a certain value ("mask_val") to the points that are False. 
+	Alternatively, it simply masks the False values, if a rule cube is already provided.
 	'''
 	cc = copy.deepcopy(cube)
 	nor, nobs, nwav = np.shape(cube)
@@ -207,7 +321,7 @@ def mask_cube(cube, mask_val, rule_cube=None, create_rule_cube=True):
 		for i in range(nor):
 			rra = np.ones(shape=(nwav), dtype=bool)
 			for j in range(nobs):
-				rr = (np.isfinite(cc[i,j,:])) & (cc[i,j,:] > 0.2*np.nanmedian(cc[i,j,:]))
+				rr = (np.isfinite(cc[i,j,:])) & (cc[i,j,:] > deep_line_threshold*np.nanmedian(cc[i,j,:]))
 				rra *= rr
 			rule_cube[i,:,:] = rra
 	
@@ -286,11 +400,11 @@ def create_model_sequence(wMod, fMod, wData, ph, kp, vSys, vBary, ip):
 		specSeq[:,j,:] = fShift.copy()
 	return specSeq
 
-def create_planet_signal(all_nights_lam, filename_planet_lam, filename_planet_flux, filename_site_values, Res_obs, T_star, R_star, R_planet, scale, T0, P, Kp, Vsys, generate=True, save_dirname='../'):
+def create_planet_signal(all_lam, filename_planet_lam, filename_planet_flux, filename_site_values, Res_obs, T_star, R_star, R_planet, scale, T0, P, Kp, Vsys, generate=True, save_dirname='../', save_base_filename='planet_mod'):
 
 	if generate:
 		## Unpacking the wavelength and flux of the model planetary signal
-		ll = np.loadtxt(filename_planet_lam, skiprows=1) 		# In micron
+		ll = np.loadtxt(filename_planet_lam, skiprows=1) 		# In microns
 		ll = ll*1e-6											# Converting from microns to m
 		F_planet = np.loadtxt(filename_planet_flux, skiprows=1) # In W m^-2 m^-1
 
@@ -312,22 +426,22 @@ def create_planet_signal(all_nights_lam, filename_planet_lam, filename_planet_fl
 
 		## Barycentric Earth radial velocity is needed to shift the planetary signal to the right reference frame
 		BJD, V_BERV = np.loadtxt(filename_site_values, usecols=(4,15), unpack=True)
-		V_BERV = -V_BERV ## V_BERV is the radial velocity of the Earth with respect to the barycentre, but we want the opposite
+		V_BERV = -V_BERV ## V_BERV is the radial velocity of the Earth with respect to the barycentre, but we want the opposite, hence the signal change
 
 		phases = ((BJD - T0)%P)/P
 
-		modseq = create_model_sequence(ll_regrid, fMod, all_nights_lam[:,0,:], phases, Kp, Vsys, V_BERV, ip)
+		modseq = create_model_sequence(ll_regrid, fMod, all_lam[:,0,:], phases, Kp, Vsys, V_BERV, ip)
 	
-		np.save(save_dirname+'all_planet_mod_new.npy', modseq)
-		np.save(save_dirname+'planet_mod_lam_new.npy', ll_regrid)
-		np.save(save_dirname+'planet_mod_new.npy', fMod)
+		np.save(save_dirname+'all_'+save_base_filename+'.npy', modseq)
+		np.save(save_dirname+''+save_base_filename+'_lam.npy', ll_regrid)
+		np.save(save_dirname+''+save_base_filename+'.npy', fMod)
 
 		return modseq, ll_regrid, fMod
 
 	else:
-		modseq = np.load(save_dirname+'all_planet_mod.npy')
-		ll_regrid = np.load(save_dirname+'planet_mod_lam.npy')
-		fMod = np.load(save_dirname+'planet_mod.npy')
+		modseq = np.load(save_dirname+'all_'+save_base_filename+'.npy')
+		ll_regrid = np.load(save_dirname+''+save_base_filename+'_lam.npy')
+		fMod = np.load(save_dirname+''+save_base_filename+'.npy')
 
 		return modseq, ll_regrid, fMod
 
@@ -377,7 +491,7 @@ def get_fixed_ccf_cube(spec, wl, rv, cs, rule_cube):
 def get_velocity_map(ccf,vIn,ph,vObs,vRest,kpVec):
 	''' 
 	Getting the Vrest-Kp matrix from the CCF cube summed over all the valid 
-	orders. Note that it can also be used to sum up logL functions in the same way, 
+	orders (not observations?). Note that it can also be used to sum up logL functions in the same way, 
 	although the robustness of interpolating logL values has not been tested yet. 
 	INPUTS:
 	- vIn   :	RV lag vector used to compute the CCFs = 'rv' in get_fixed_ccf_cube()
@@ -404,3 +518,24 @@ def get_velocity_map(ccf,vIn,ph,vObs,vRest,kpVec):
 			trail[j,:] = int_fit(vRest)
 		diag[ik,] = np.sum(trail,axis=0)
 	return diag
+
+def mask_data_post_pca(cube, rule_cube, sigVal=5.0, dynamicSigma=False):
+	''' 
+	Masking the noisy columns in the data after telluric removal
+	'''
+	no, nf, nx = cube.shape
+	masked = cube.copy()
+	rule_cube_masked = rule_cube.copy()
+	for io in range(no):
+		varVec = np.var(cube[io,],axis=0)
+		ivalid = varVec > 0
+		nvalid = ivalid.sum()
+		if dynamicSigma:
+			sigVal = stats.norm.isf(0.5/nvalid)
+		medVar = np.median(varVec[ivalid])        
+		masked[io,:,varVec > sigVal*medVar] = 0.0
+		rule_cube_masked[io,:,varVec > sigVal*medVar] = False
+	return masked, rule_cube_masked
+
+def model_reprocessing(lam, spec, planet_model):
+	a

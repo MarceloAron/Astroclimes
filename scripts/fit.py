@@ -109,4 +109,5 @@ def log_probability(params):
 	if np.isnan(ll):
 		print("Log likelihood is NaN")
 		return -np.inf
+	
 	return lp + ll

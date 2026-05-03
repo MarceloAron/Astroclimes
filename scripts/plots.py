@@ -7,6 +7,7 @@ from matplotlib.lines import Line2D
 import matplotlib.patches as mpatches
 from matplotlib import rc
 from mpl_toolkits.axes_grid1.inset_locator import mark_inset
+from matplotlib.gridspec import GridSpec
 import corner
 
 ## Color-blind friendly colors: blue, orange, green, pink, brown, purple, gray, red and yellow
@@ -45,8 +46,8 @@ def plot_em_line_mask(lam, spec, spec_skymodel, em_lines_mask, savefig=False, di
 	plt.tick_params(axis='y')
 
 	if savefig:		
-		plt.savefig(dirname+filenames[0]+'.pdf')
-		plt.savefig(dirname+filenames[0]+'.jpeg', dpi=300)
+		plt.savefig(dirname+filenames[0]+'.pdf', bbox_inches='tight')
+		plt.savefig(dirname+filenames[0]+'.jpeg', dpi=300, bbox_inches='tight')
 
 	#plt.show()
 	plt.close()
@@ -60,8 +61,8 @@ def plot_em_line_mask(lam, spec, spec_skymodel, em_lines_mask, savefig=False, di
 	plt.tick_params(axis='y')
 
 	if savefig:		
-		plt.savefig(dirname+filenames[1]+'.pdf')
-		plt.savefig(dirname+filenames[1]+'.jpeg', dpi=300)
+		plt.savefig(dirname+filenames[1]+'.pdf', bbox_inches='tight')
+		plt.savefig(dirname+filenames[1]+'.jpeg', dpi=300, bbox_inches='tight')
 
 	#plt.show()
 	plt.close()
@@ -127,8 +128,8 @@ def plot_norm_mask(lam, spec, filt, spec_clip, idx_out, savefig=False, dirname=s
 	plt.subplots_adjust(hspace=0)
 
 	if savefig:		
-		plt.savefig(dirname+filename+'.pdf')
-		plt.savefig(dirname+filename+'.jpeg', dpi=300)
+		plt.savefig(dirname+filename+'.pdf', bbox_inches='tight')
+		plt.savefig(dirname+filename+'.jpeg', dpi=300, bbox_inches='tight')
 
 	#plt.show()
 	plt.close()
@@ -171,8 +172,8 @@ def plot_normalisation(lam, spec, norm_mask, filt, savefig=False, dirname=save_d
 	plt.subplots_adjust(hspace=0)
 
 	if savefig:		
-		plt.savefig(dirname+filename+'.pdf')
-		plt.savefig(dirname+filename+'.jpeg', dpi=300)
+		plt.savefig(dirname+filename+'.pdf', bbox_inches='tight')
+		plt.savefig(dirname+filename+'.jpeg', dpi=300, bbox_inches='tight')
 
 	#plt.show()
 	plt.close()
@@ -406,8 +407,8 @@ def plot_tel_lines(lam, specs, labels=['Obs. spectra', 'Model spectra'], zoom=Tr
 	plt.subplots_adjust(hspace=0)
 
 	if savefig:		
-		plt.savefig(dirname+filename+'.pdf')
-		plt.savefig(dirname+filename+'.jpeg', dpi=300)
+		plt.savefig(dirname+filename+'.pdf', bbox_inches='tight')
+		plt.savefig(dirname+filename+'.jpeg', dpi=300, bbox_inches='tight')
 
 	#plt.show()
 	plt.close()
@@ -424,8 +425,8 @@ def make_autocorr_plot(check_each_n_steps, savefig=True, dirname=save_directory,
 	plt.ylabel('Auto-correlation time', fontsize=16)
 	
 	if savefig:		
-		plt.savefig(dirname+filename+'.pdf')
-		plt.savefig(dirname+filename+'.jpeg', dpi=300)
+		plt.savefig(dirname+filename+'.pdf', bbox_inches='tight')
+		plt.savefig(dirname+filename+'.jpeg', dpi=300, bbox_inches='tight')
 
 	#plt.show()
 	plt.close()
@@ -446,11 +447,13 @@ def make_chain_plot(samples, ndim, labels, savefig=True, dirname=save_directory,
 		axes.set_xlabel("Step number", fontsize=16)
 	else:
 		axes[-1].set_xlabel("Step number", fontsize=16)
+	
+	#fig.align_ylabels()
 	plt.subplots_adjust(hspace=0.6)
 	
 	if savefig:		
-		plt.savefig(dirname+filename+'.pdf')
-		plt.savefig(dirname+filename+'.jpeg', dpi=300)
+		plt.savefig(dirname+filename+'.pdf', bbox_inches='tight')
+		plt.savefig(dirname+filename+'.jpeg', dpi=300, bbox_inches='tight')
 
 	#plt.show()
 	plt.close()
@@ -485,8 +488,8 @@ def make_corner_plot(ndim, flat_samples, logpflat, labels, truths, savefig=True,
 			ax.plot(highest_prob[xi], highest_prob[yi], color=CBcols[7], marker='s')
 
 	if savefig:		
-		plt.savefig(dirname+filename+'.pdf')
-		plt.savefig(dirname+filename+'.jpeg', dpi=300)
+		plt.savefig(dirname+filename+'.pdf', bbox_inches='tight')
+		plt.savefig(dirname+filename+'.jpeg', dpi=300, bbox_inches='tight')
 
 	#plt.show()
 	plt.close()
@@ -525,7 +528,7 @@ def plot_par_evol(times, u_times, Xs, u_Xs, legend_labels, xlim, ylim, ticks, ti
 		plt.savefig(dirname+filename+'.pdf', bbox_inches='tight')
 		plt.savefig(dirname+filename+'.jpeg', dpi=350, bbox_inches='tight')
 
-	plt.show()
+	#plt.show()
 	plt.close()
 
 def plot_par_evol_with_res(times, u_times, Xs, u_Xs, truth_vals, legend_labels, xlim, ylim, ticks, tick_labels, xlabel, ylabel, markerstyles, markersizes, linestyles, zorders, cols=CBcols, xscale='linear', yscale='linear', legend=False, leg_loc='best', nleg_cols=1, savefig=False, dirname=save_directory, filename='abundance_evolution'):
@@ -579,7 +582,7 @@ def plot_par_evol_with_res(times, u_times, Xs, u_Xs, truth_vals, legend_labels, 
 		plt.savefig(dirname+filename+'.pdf', bbox_inches='tight')
 		plt.savefig(dirname+filename+'.jpeg', dpi=350, bbox_inches='tight')
 
-	plt.show()
+	#plt.show()
 	plt.close()
 
 def plot_BIG_par_evol(times, u_times, Xs, u_Xs, legend_labels, xlim, ylim, ticks, tick_labels, xlabel, ylabel, markerstyles, markersizes, linestyles, zorders, cols=CBcols, xscale='linear', yscale='linear', legend=False, leg_loc='best', nleg_cols=1, savefig=False, dirname=save_directory, filename='abundance_evolution'):
@@ -625,35 +628,47 @@ def plot_BIG_par_evol(times, u_times, Xs, u_Xs, legend_labels, xlim, ylim, ticks
 		plt.savefig(dirname+filename+'.pdf', bbox_inches='tight')
 		plt.savefig(dirname+filename+'.jpeg', dpi=350, bbox_inches='tight')
 
-	plt.show()
+	#plt.show()
 	plt.close()
 
-def plot_all_spec_with_mods(data, labels=['Obs. spectra', 'Model spectra', 'New model spectra'], xlim=None, xx=None, cols=CBcols, savefig=False, dirname=save_directory, filename='all_specs_and_mods'):
+def plot_all_spec_with_mods(data, molecfit_data, labels=['Obs. spectra', 'Model spectra'], xlim=None, xx=None, cols=CBcols, savefig=False, dirname=save_directory, filename='all_specs_and_mods'):
 	#fig, axes = plt.subplots(2, figsize=(10, 8), sharex=True)
 	fig = plt.figure()#figsize=(12,8))
 	ax1 = plt.subplot2grid((3,1), (0,0), rowspan=2, colspan=1)
 	ax2 = plt.subplot2grid((3,1), (2,0), rowspan=1, colspan=1)#, sharex=ax1)
 
-	ax1.axhline(1, ls='dashed', c='black', zorder=7)
-	ax2.axhline(0, ls='dashed', lw=2., c='black', zorder=7)
+	#ax1.axhline(1, ls='dashed', c='black', zorder=7)
+	#ax2.axhline(0, ls='dashed', lw=2., c='black', zorder=7)
+	ax2.axhline(0, ls='dashed', lw=2., c='grey', zorder=7)
+	#ax2.axhline(1, ls='dashed', lw=2., c='black', zorder=7)
 	if xx:
 		ax1.axvline(xx[0], lw=2, c='k', zorder=7)
 		ax1.axvline(xx[1], lw=2, c='k', zorder=7)
 
 	RMSEs = np.zeros(len(data))
-	RMSEs_new = np.zeros(len(data))
 	for i in range(len(data)):
 		lam = data[i][0]
 		spec_obs = data[i][1]
 		spec_mod = data[i][2]
-		spec_mod_new = data[i][3]
-		ax1.plot(lam, spec_obs, lw=2., c=cols[0], alpha=0.3, zorder=5)
-		ax1.plot(lam, spec_mod, lw=2., c=cols[1], alpha=0.3, zorder=6)
-		ax1.plot(lam, spec_mod_new, lw=2., c=cols[2], alpha=0.3, zorder=6)
-		ax2.plot(lam, spec_obs - spec_mod, 'o', ms=2., c=cols[1], alpha=0.3)
-		ax2.plot(lam, spec_obs - spec_mod_new, 'o', ms=2., c=cols[2], alpha=0.3)
-		RMSEs[i] = np.sqrt(np.mean((spec_obs - spec_mod)**2))
-		RMSEs_new[i] = np.sqrt(np.mean((spec_obs - spec_mod_new)**2))
+		spec_mod_with_stel_mod = data[i][4]
+		lam_molecfit = molecfit_data[0][i,:]
+		spec_molecfit = molecfit_data[1][i,:]
+		print(i, np.shape(lam), np.shape(spec_mod), np.shape(lam_molecfit), np.shape(spec_molecfit))
+		RMSEs[i] = np.sqrt(np.mean((spec_obs - spec_mod_with_stel_mod)**2))
+		#ax1.plot(lam, spec_obs, lw=2., c=cols[0], alpha=0.3, zorder=5)
+		#ax1.plot(lam, spec_mod, lw=2., c=cols[1], alpha=0.3, zorder=6)
+		#ax1.plot(lam, spec_mod_with_stel_mod/spec_mod, lw=2., c=cols[2], alpha=0.3, zorder=6)
+		ax1.plot(lam_molecfit, spec_molecfit, lw=2., c='blue', alpha=0.3, zorder=6)
+		#ax1.plot(lam, spec_obs / spec_mod_with_stel_mod, 'o', ms=2., c=cols[3], alpha=0.3, zorder=10)
+		#ax1.plot(lam, spec_mod_with_stel_mod, lw=2., c=cols[1], alpha=0.3, zorder=6)
+		#ax2.plot(lam, spec_obs - spec_mod_with_stel_mod, 'o', ms=2., c=cols[0], alpha=0.3)
+		#ax2.plot(lam, spec_obs / spec_mod_with_stel_mod, 'o', ms=2., c=cols[0], alpha=0.3)
+		#ax2.plot(lam, spec_obs / spec_mod_with_stel_mod - 1, 'o', ms=2., c='red', alpha=0.1, zorder=5)
+		#ax2.plot(lam, spec_obs - spec_mod_with_stel_mod, 'o', ms=2., c='k', alpha=0.1, zorder=6)
+		#handles2 = []
+		#handles2.append(Line2D([0], [0], ls="None", marker='o', c='red', label='Division'))
+		#handles2.append(Line2D([0], [0], ls="None", marker='o', c='k', label='Subtraction'))
+	ax1.plot(lam_molecfit, spec_molecfit, lw=2., c='red', alpha=0.3, zorder=6, label='Molecfit')
 
 	handles = []
 	for i in range(len(labels)):
@@ -665,33 +680,36 @@ def plot_all_spec_with_mods(data, labels=['Obs. spectra', 'Model spectra', 'New 
 	if xlim:
 		ax1.set_xlim(xlim[0], xlim[1])
 		ax2.set_xlim(xlim[0], xlim[1])
-	ax1.set_ylim(-0.01,1.2)
-	#ax2.set_ylim(-0.15,0.15)
+	ax1.set_ylim(-0.05,1.2)
+	#ax2.set_ylim(-0.08,0.23)
+	#ax2.set_ylim(0.91,1.24)
 
 	RMSEs_mean = np.mean(RMSEs)
-	ax2.text(0.05, 0.8, r'$\overline{RMSE}=$'+f'{RMSEs_mean:.2f}', fontsize=12, bbox=dict(facecolor='none', edgecolor='grey', boxstyle='round'), transform = ax2.transAxes)
-	RMSEs_new_mean = np.mean(RMSEs_new)
-	ax2.text(0.45, 0.8, r'$\overline{RMSE}=$'+f'{RMSEs_new_mean:.2f}', fontsize=12, bbox=dict(facecolor='none', edgecolor='grey', boxstyle='round'), transform = ax2.transAxes)
+	ax2.text(0.06, 0.8, r'$\overline{RMSE}=$'+f'{RMSEs_mean:.2f}', fontsize=12, bbox=dict(facecolor='none', edgecolor='grey', boxstyle='round'), transform = ax2.transAxes)
 
 	ax2.tick_params(axis='x', labelsize=14)
 	ax2.tick_params(axis='y', labelsize=14)
 	ax2.set_ylabel('Residuals', fontsize=14)
 	ax2.set_xlabel('Wavelength ('+r'$\mu$'+'m)', fontsize=14)
 
-	ax1.legend(loc='lower right', handles=handles, fontsize=12).set_zorder(15)
+	#ax1.legend(loc=(0.5,0.04), handles=handles, fontsize=12).set_zorder(15)
+	#ax1.legend(loc='best', handles=handles, fontsize=12).set_zorder(15)
+	ax1.legend(loc='best', fontsize=12).set_zorder(15)
+	#ax1.legend(loc='lower left', handles=handles, fontsize=12).set_zorder(15)
+	#ax2.legend(loc='upper left', handles=handles2, fontsize=12).set_zorder(15)
 
 	fig.align_ylabels()
 	plt.tight_layout()
 	plt.subplots_adjust(hspace=0)
 
 	if savefig:		
-		#plt.savefig(dirname+filename+'.pdf')
-		plt.savefig(dirname+filename+'.jpeg', dpi=300)
+		#plt.savefig(dirname+filename+'.pdf', bbox_inches='tight')
+		plt.savefig(dirname+filename+'.jpeg', dpi=300, bbox_inches='tight')
 
 	plt.show()
 	plt.close()
 
-def plot_cubes(lam, flux, orders, orders_to_plot, title, vmin=None, vmax=None, savefig=False, dirname=save_directory, filename='flux_cubes'):
+def plot_cubes(lam, flux, orders, orders_to_plot, title, vmin=None, vmax=None, y_phase=[], savefig=False, dirname=save_directory, filename='flux_cubes'):
 	norders, nobs, nwaves = np.shape(lam)
 	norders = len(orders_to_plot)
 	x_arr = np.arange(nwaves+1,step=int(nwaves/6)-1, dtype=int)
@@ -707,8 +725,16 @@ def plot_cubes(lam, flux, orders, orders_to_plot, title, vmin=None, vmax=None, s
 			axes[i].imshow(flux[ord_idx,:,:], origin='lower', aspect='auto', interpolation='None')
 
 		axes[i].set(xticks=x_arr, xticklabels=[f'{lam[ord_idx,0,x]*1e6:.3f}' for x in x_arr])
+		## Checking if the left y-axis is observation number or phase and adding tick labels accordingly
+		if len(y_phase) > 0:
+			y_arr = [int(np.mean(np.arange(len(y_phase))) - np.std(np.arange(len(y_phase)))), int(np.mean(np.arange(len(y_phase))) + np.std(np.arange(len(y_phase))))]
+			axes[i].set(yticks=y_arr, yticklabels=[f'{y_phase[y]:.3f}' for y in y_arr])
+	
 	fig.supxlabel('Wavelength ('+r'$\mu$'+'m)')
-	fig.supylabel('Obs. nr.')
+	if len(y_phase) > 0:
+		fig.supylabel('Orbital phase')
+	else:
+		fig.supylabel('Obs. nr.')
 
 	plt.tight_layout()
 	#if len(orders_to_plot) > 7:
@@ -716,8 +742,8 @@ def plot_cubes(lam, flux, orders, orders_to_plot, title, vmin=None, vmax=None, s
 	plt.subplots_adjust(bottom=0.035, top=0.95)
 
 	if savefig:		
-		plt.savefig(dirname+filename+'.pdf')
-		plt.savefig(dirname+filename+'.jpeg', dpi=300)
+		plt.savefig(dirname+filename+'.pdf', bbox_inches='tight')
+		plt.savefig(dirname+filename+'.jpeg', dpi=300, bbox_inches='tight')
 
 	#plt.show()
 	plt.close()
@@ -727,25 +753,32 @@ def plot_cube_steps(lam, cube_steps, vmins, vmaxs, y_phase=[], savefig=False, di
 	nsteps = len(cube_steps)
 	nwaves = len(lam)
 	x_arr = np.arange(nwaves+1,step=int(nwaves/6)-1, dtype=int)
-	fig, axes = plt.subplots(nsteps)
+	fig, axes = plt.subplots(nsteps, sharex=True)
 	#fig, axes = plt.subplots(nsteps, figsize=(10,int(nsteps*2)))
-	mid = (fig.subplotpars.right + fig.subplotpars.left)/2
+	#mid = (fig.subplotpars.right + fig.subplotpars.left)/2
+	#axes[0].set_title('Detrending process using Astroclimes', fontsize=14, x=mid)
 	for i in range(nsteps):
 		im = axes[i].imshow(cube_steps[i], origin='lower', aspect='auto', interpolation='None', vmin=vmins[i], vmax=vmaxs[i])
 		axes[i].set(xticks=[])
-		fig.colorbar(im, aspect=5, pad=0.01)
+		cbar = fig.colorbar(im, aspect=5, pad=0.01)
+		if vmins[i] != None:
+			if i >3:
+				cbar.set_ticks(ticks=[0.985,0.999,1.015], labels=[f'{cbar_tick:.3f}' for cbar_tick in [0.985,0.999,1.015]])
+			else:
+				cbar_ticks = [np.nanmean(cube_steps[i]) - 2*np.nanstd(cube_steps[i]), np.nanmean(cube_steps[i]), np.nanmean(cube_steps[i]) + 2*np.nanstd(cube_steps[i])]
+				cbar.set_ticks(ticks=cbar_ticks, labels=[f'{cbar_tick:.3f}' for cbar_tick in cbar_ticks])
 
 		## Checking if the left y-axis is observation number or phase and adding tick labels accordingly
 		if len(y_phase) > 0:
-			y_arr = np.arange(len(y_phase),step=int(len(y_phase)/3), dtype=int)
+			y_arr = [int(np.mean(np.arange(len(y_phase))) - np.std(np.arange(len(y_phase)))), int(np.mean(np.arange(len(y_phase))) + np.std(np.arange(len(y_phase))))]
 			axes[i].set(yticks=y_arr, yticklabels=[f'{y_phase[y]:.3f}' for y in y_arr])
 		else:
 			nobs = len(cube_steps[i])
-			y_arr = np.arange(nobs,step=int(nobs/3), dtype=int)
+			y_arr = np.arange(nobs,step=int(nobs/3 + 1), dtype=int)
 			axes[i].set(yticks=y_arr, yticklabels=[f'{y+1:.0f}' for y in y_arr])
 		axes[i].text(0.02, 0.70, alphabet[i], transform=axes[i].transAxes)
 
-	axes[i].set(xticks=x_arr, xticklabels=[f'{lam[x]*1e6:.3f}' for x in x_arr])
+	axes[i].set(xticks=x_arr, xticklabels=[f'{lam[x]*1e6:.4f}' for x in x_arr])
 	fig.supxlabel('Wavelength ('+r'$\mu$'+'m)')
 	if len(y_phase) > 0:
 		fig.supylabel('Orbital phase')
@@ -753,33 +786,335 @@ def plot_cube_steps(lam, cube_steps, vmins, vmaxs, y_phase=[], savefig=False, di
 		fig.supylabel('Obs. nr.')
 
 	plt.tight_layout()
-	plt.subplots_adjust(bottom=0.12, left=0.10, hspace=0)
+	if len(y_phase) > 0:
+		plt.subplots_adjust(bottom=0.12, left=0.12, hspace=0)
+	else:
+		plt.subplots_adjust(bottom=0.12, left=0.10, hspace=0)
 
 	if savefig:		
-		plt.savefig(dirname+filename+'.pdf')
-		plt.savefig(dirname+filename+'.jpeg', dpi=300)
+		plt.savefig(dirname+filename+'.pdf', bbox_inches='tight')
+		plt.savefig(dirname+filename+'.jpeg', dpi=300, bbox_inches='tight')
 
 	#plt.show()
 	plt.close()
 
-def plot_squares(square, extent, xlabel, ylabel, origin='lower', aspect='auto', interpolation='None', savefig=False, dirname=save_directory, filename='flux_squares'):
+def plot_cube_steps_extra_panel(lam, cube_steps, vmin, vmax, y_phase=[], savefig=False, dirname=save_directory, filename='cube_steps'):
+	#for i in range(len(y_phase)):
+	i = 5
+	alphabet = ['(a)', '(b)', '(c)', '(d)', '(e)', '(f)', '(g)', '(h)', '(i)', '(j)', '(k)', '(l)', '(m)', '(n)', '(o)', '(p)']
+	nsteps = len(cube_steps)
+	nwaves = len(lam)
+	x_arr = np.arange(nwaves+1,step=int(nwaves/6)-1, dtype=int)
+	mosaic_layout = '''
+					AAAAAAAAAAAAAAAAAAAAE
+					BBBBBBBBBBBBBBBBBBBBE
+					CCCCCCCCCCCCCCCCCCCCE
+					DDDDDDDDDDDDDDDDDDDD.
+					'''
+	fig, axes = plt.subplot_mosaic(mosaic_layout)
+	im = axes['A'].imshow(cube_steps[0]*1e4, origin='lower', aspect='auto', interpolation='None', vmin=vmin, vmax=vmax)
+	axes['A'].text(0.02, 0.80, alphabet[0], transform=axes['A'].transAxes)
+	axes['B'].imshow(cube_steps[1]*1e4, origin='lower', aspect='auto', interpolation='None', vmin=vmin, vmax=vmax)
+	axes['B'].text(0.02, 0.80, alphabet[1], transform=axes['B'].transAxes)
+	axes['C'].imshow(cube_steps[2]*1e4, origin='lower', aspect='auto', interpolation='None', vmin=vmin, vmax=vmax)
+	axes['C'].text(0.02, 0.80, alphabet[2], transform=axes['C'].transAxes)
+	cbar = fig.colorbar(im, shrink=0.1, pad=0.01, cax=axes['E'])
+	cbar_ticks = [np.nanmean(cube_steps[0]*1e4) - 2*np.nanstd(cube_steps[0]*1e4), np.nanmean(cube_steps[0]*1e4), np.nanmean(cube_steps[0]*1e4) + 2*np.nanstd(cube_steps[0]*1e4)]
+	cbar.set_ticks(ticks=cbar_ticks, labels=[f'{cbar_tick:.1f}' for cbar_tick in cbar_ticks])
+	axes['E'].set_ylabel(r'$10^4 \times$'+' Flux')
+	axes['D'].plot(cube_steps[0][i]*1e4, c='grey', label=f'{alphabet[0]}', alpha=0.6)
+	axes['D'].plot(cube_steps[1][i]*1e4, c='black', label=f'{alphabet[1]}', alpha=0.6)
+	axes['D'].plot(cube_steps[2][i]*1e4, c='red', label=f'{alphabet[2]}', alpha=0.6)
+	axes['D'].set_xlim(0,len(lam))
+	axes['D'].text(0.02, 0.80, alphabet[3], transform=axes['D'].transAxes)
+	if len(y_phase) > 0:
+		axes['D'].text(0.25, 0.80, f'Phase={y_phase[i]:.3f}', transform=axes['D'].transAxes)
+	axes['D'].legend(loc='best', bbox_to_anchor=[1.01, 0.9])
+	axes['D'].set_ylim(-3.4,3.4)
+	
+	## Checking if the left y-axis is observation number or phase and adding tick labels accordingly
+	if len(y_phase) > 0:
+		y_arr = [int(np.mean(np.arange(len(y_phase))) - np.std(np.arange(len(y_phase)))), int(np.mean(np.arange(len(y_phase)))), int(np.mean(np.arange(len(y_phase))) + np.std(np.arange(len(y_phase))))]
+		axes['A'].set(yticks=y_arr, yticklabels=[f'{y_phase[y]:.3f}' for y in y_arr])
+		axes['B'].set(yticks=y_arr, yticklabels=[f'{y_phase[y]:.3f}' for y in y_arr])
+		axes['C'].set(yticks=y_arr, yticklabels=[f'{y_phase[y]:.3f}' for y in y_arr])
+		axes['B'].set_ylabel('Orbital phase')
+	else:
+		nobs = len(cube_steps[i])
+		y_arr = np.arange(nobs,step=int(nobs/3 + 1), dtype=int)
+		axes['A'].set(yticks=y_arr, yticklabels=[f'{y+1:.0f}' for y in y_arr])
+		axes['B'].set(yticks=y_arr, yticklabels=[f'{y+1:.0f}' for y in y_arr])
+		axes['C'].set(yticks=y_arr, yticklabels=[f'{y+1:.0f}' for y in y_arr])
+		axes['B'].set_ylabel('Obs. nr.')
+
+	axes['A'].set(xticks=[])
+	axes['B'].set(xticks=[])
+	axes['C'].set(xticks=[])
+	axes['D'].set(xticks=x_arr, xticklabels=[f'{lam[x]*1e6:.4f}' for x in x_arr])
+	
+	axes['D'].set_xlabel('Wavelength ('+r'$\mu$'+'m)')
+	axes['D'].set_ylabel(r'$10^4 \times$'+' Flux')
+
+	fig.align_ylabels()
+
+	if len(y_phase) > 0:
+		plt.subplots_adjust(bottom=0.12, left=0.12, hspace=0)
+	else:
+		plt.subplots_adjust(bottom=0.12, left=0.10, hspace=0)
+
+	if savefig:		
+		plt.savefig(dirname+filename+f'_{i}.pdf', bbox_inches='tight')
+		plt.savefig(dirname+filename+f'_{i}.jpeg', dpi=300, bbox_inches='tight')
+
+	plt.show()
+	plt.close()
+
+def plot_cube_steps_extra_panel_and_molecfit(lam, cube_steps, vmin, vmax, y_phase, savefig=False, dirname=save_directory, filename='cube_steps'):
+	#for i in range(len(y_phase)):
+	i = 5
+	alphabet = ['(a)', '(b)', '(c)', '(d)', '(e)', '(f)', '(g)', '(h)', '(i)', '(j)', '(k)', '(l)', '(m)', '(n)', '(o)', '(p)']
+	nsteps = len(cube_steps)
+	nwaves = len(lam)
+	x_arr = np.arange(nwaves+1,step=int(nwaves/6)-1, dtype=int)
+	mosaic_layout = '''
+					AAAAAAAAAAAAAAAAAAAAE
+					BBBBBBBBBBBBBBBBBBBBE
+					XXXXXXXXXXXXXXXXXXXXE
+					CCCCCCCCCCCCCCCCCCCCE
+					DDDDDDDDDDDDDDDDDDDD.
+					'''
+	fig, axes = plt.subplot_mosaic(mosaic_layout)
+	im = axes['A'].imshow(cube_steps[0]*1e4, origin='lower', aspect='auto', interpolation='None', vmin=vmin, vmax=vmax)
+	axes['A'].text(0.02, 0.80, alphabet[0], transform=axes['A'].transAxes)
+	axes['B'].imshow(cube_steps[1]*1e4, origin='lower', aspect='auto', interpolation='None', vmin=vmin, vmax=vmax)
+	axes['B'].text(0.02, 0.80, alphabet[1], transform=axes['B'].transAxes)
+	axes['X'].imshow(cube_steps[2]*1e4, origin='lower', aspect='auto', interpolation='None', vmin=vmin, vmax=vmax)
+	axes['X'].text(0.02, 0.80, alphabet[2], transform=axes['X'].transAxes)
+	axes['C'].imshow(cube_steps[3]*1e4, origin='lower', aspect='auto', interpolation='None', vmin=vmin, vmax=vmax)
+	axes['C'].text(0.02, 0.80, alphabet[3], transform=axes['C'].transAxes)
+	cbar = fig.colorbar(im, shrink=0.1, pad=0.01, cax=axes['E'])
+	cbar_ticks = [np.nanmean(cube_steps[0]*1e4) - 2*np.nanstd(cube_steps[0]*1e4), np.nanmean(cube_steps[0]*1e4), np.nanmean(cube_steps[0]*1e4) + 2*np.nanstd(cube_steps[0]*1e4)]
+	cbar.set_ticks(ticks=cbar_ticks, labels=[f'{cbar_tick:.1f}' for cbar_tick in cbar_ticks])
+	axes['E'].set_ylabel(r'$10^4 \times$'+' Flux', fontsize=10)
+	axes['D'].plot(cube_steps[0][i]*1e4, c='grey', label=f'{alphabet[0]}', alpha=0.6)
+	axes['D'].plot(cube_steps[1][i]*1e4, c='black', label=f'{alphabet[1]}', alpha=0.6)
+	axes['D'].plot(cube_steps[2][i]*1e4, c='blue', label=f'{alphabet[2]}', alpha=0.6)
+	axes['D'].plot(cube_steps[3][i]*1e4, c='red', label=f'{alphabet[3]}', alpha=0.6)
+	axes['D'].set_xlim(0,len(lam))
+	axes['D'].text(0.02, 0.80, alphabet[4], transform=axes['D'].transAxes)
+	if len(y_phase) > 0:
+		axes['D'].text(0.25, 0.80, f'Phase={y_phase[i]:.3f}', transform=axes['D'].transAxes)
+	axes['D'].legend(loc='best', bbox_to_anchor=[1.01, 0.9])
+	axes['D'].set_ylim(-3.4,3.4)
+
+	mid_y = (axes['B'].get_position().y1 + axes['X'].get_position().y0)/2
+	y_arr = [int(np.mean(np.arange(len(y_phase))) - np.std(np.arange(len(y_phase)))), int(np.mean(np.arange(len(y_phase)))), int(np.mean(np.arange(len(y_phase))) + np.std(np.arange(len(y_phase))))]
+	axes['A'].set(yticks=y_arr, yticklabels=[f'{y_phase[y]:.3f}' for y in y_arr])
+	axes['B'].set(yticks=y_arr, yticklabels=[f'{y_phase[y]:.3f}' for y in y_arr])
+	axes['X'].set(yticks=y_arr, yticklabels=[f'{y_phase[y]:.3f}' for y in y_arr])
+	axes['C'].set(yticks=y_arr, yticklabels=[f'{y_phase[y]:.3f}' for y in y_arr])
+	fig.supylabel('Orbital phase', y=mid_y, fontsize=10)
+
+	axes['A'].set(xticks=[])
+	axes['B'].set(xticks=[])
+	axes['X'].set(xticks=[])
+	axes['C'].set(xticks=[])
+	axes['D'].set(xticks=x_arr, xticklabels=[f'{lam[x]*1e6:.4f}' for x in x_arr])
+	
+	axes['D'].set_xlabel('Wavelength ('+r'$\mu$'+'m)', fontsize=10)
+	axes['D'].set_ylabel(r'$10^4 \times$'+' Flux', fontsize=10)
+
+	fig.align_ylabels()
+
+	if len(y_phase) > 0:
+		plt.subplots_adjust(bottom=0.12, left=0.12, hspace=0)
+	else:
+		plt.subplots_adjust(bottom=0.12, left=0.10, hspace=0)
+
+	if savefig:		
+		plt.savefig(dirname+filename+f'_{i}.pdf', bbox_inches='tight')
+		plt.savefig(dirname+filename+f'_{i}.jpeg', dpi=300, bbox_inches='tight')
+
+	plt.show()
+	plt.close()
+
+def plot_cube_steps_extra_panel_all_PCA_comps(lam, cube_steps, vmin, vmax, y_phase, nc_PCAs, cols=CBcols, savefig=False, dirname=save_directory, filename='cube_steps'):
+	#for i in range(len(y_phase)):
+	obs_idx = 5
+	alphabet = ['(a)', '(b)', '(c)', '(d)', '(e)', '(f)', '(g)', '(h)', '(i)', '(j)', '(k)', '(l)', '(m)', '(n)', '(o)', '(p)']
+	axes_keys = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
+	nsteps = len(cube_steps)
+	nwaves = len(lam)
+	x_arr = np.arange(nwaves+1,step=int(nwaves/6)-1, dtype=int)
+	y_arr = [int(np.mean(np.arange(len(y_phase))) - np.std(np.arange(len(y_phase)))), int(np.mean(np.arange(len(y_phase)))), int(np.mean(np.arange(len(y_phase))) + np.std(np.arange(len(y_phase))))]
+	mosaic_layout = '''
+					AAAAAAAAAAAAAAAAAAAAI
+					BBBBBBBBBBBBBBBBBBBBI
+					CCCCCCCCCCCCCCCCCCCCI
+					DDDDDDDDDDDDDDDDDDDDI
+					EEEEEEEEEEEEEEEEEEEEI
+					FFFFFFFFFFFFFFFFFFFFI
+					GGGGGGGGGGGGGGGGGGGG.
+					HHHHHHHHHHHHHHHHHHHH.
+					'''
+	fig, axes = plt.subplot_mosaic(mosaic_layout, figsize=(9.6,7.2))
+	for ii in range(len(cube_steps)):
+		im = axes[axes_keys[ii]].imshow(cube_steps[ii]*1e4, origin='lower', aspect='auto', interpolation='None', vmin=vmin, vmax=vmax)
+		axes[axes_keys[ii]].text(0.02, 0.75, alphabet[ii], transform=axes[axes_keys[ii]].transAxes, fontsize=12, fontweight='bold')
+		if ii != 0:
+			axes[axes_keys[ii]].text(0.90,0.75,r'$N_C$'+f'={nc_PCAs[ii]:2}', transform=axes[axes_keys[ii]].transAxes, fontsize=12, fontweight='bold')
+		axes[axes_keys[ii]].set(yticks=y_arr, yticklabels=[f'{y_phase[y]:.3f}' for y in y_arr])
+		axes[axes_keys[ii]].tick_params(labelsize=12)
+		axes[axes_keys[ii]].set(xticks=[])
+		axes[axes_keys[-2]].plot(cube_steps[ii][obs_idx]*1e4, c=cols[ii], label=f'{alphabet[ii]}', alpha=0.6)
+
+	cbar = fig.colorbar(im, shrink=0.1, pad=0.01, cax=axes[axes_keys[-1]])
+	cbar_ticks = [np.nanmean(cube_steps[0]*1e4) - 2*np.nanstd(cube_steps[0]*1e4), np.nanmean(cube_steps[0]*1e4), np.nanmean(cube_steps[0]*1e4) + 2*np.nanstd(cube_steps[0]*1e4)]
+	cbar.set_ticks(ticks=cbar_ticks, labels=[f'{cbar_tick:.1f}' for cbar_tick in cbar_ticks])
+	axes[axes_keys[-1]].set_ylabel(r'$10^4 \times$'+' Flux', fontsize=12)
+	axes[axes_keys[-1]].tick_params(labelsize=12)
+	
+	#mid_y = (axes[axes_keys[0]].get_position().y1 + axes[axes_keys[-2]].get_position().y0)/2
+	#fig.supylabel('Orbital phase', fontsize=10)
+	axes[axes_keys[3]].set_ylabel('Orbital phase', fontsize=12)
+	
+	axes[axes_keys[-2]].set_xlim(0,len(lam))
+	axes[axes_keys[-2]].text(0.02, 0.80, alphabet[len(cube_steps)], transform=axes[axes_keys[-2]].transAxes)
+	if len(y_phase) > 0:
+		axes[axes_keys[-2]].text(0.25, 0.80, f'Phase={y_phase[obs_idx]:.3f}', transform=axes[axes_keys[-2]].transAxes, fontsize=12)
+	#axes[axes_keys[-2]].legend(loc='best', bbox_to_anchor=[1.01, 0.9])
+	axes[axes_keys[-2]].legend(loc='best', fontsize=12, bbox_transform=axes[axes_keys[-1]].transAxes, bbox_to_anchor=[0,0])
+	axes[axes_keys[-2]].set_ylim(-3.4,3.4)
+	
+	axes[axes_keys[-2]].set(xticks=x_arr, xticklabels=[f'{lam[x]*1e6:.4f}' for x in x_arr])
+	axes[axes_keys[-2]].set_xlabel('Wavelength ('+r'$\mu$'+'m)', fontsize=12)
+	axes[axes_keys[-2]].set_ylabel(r'$10^4 \times$'+' Flux', fontsize=12)
+	axes[axes_keys[-2]].tick_params(labelsize=12)
+
+	fig.align_ylabels()
+	plt.subplots_adjust(bottom=0.12, left=0.12, hspace=0)
+
+	if savefig:		
+		plt.savefig(dirname+filename+f'_{obs_idx}.pdf', bbox_inches='tight')
+		plt.savefig(dirname+filename+f'_{obs_idx}.jpeg', dpi=300, bbox_inches='tight')
+
+	plt.show()
+	plt.close()
+
+def plot_squares(square, extent, xlabel, ylabel, y_phase=[], origin='lower', aspect='auto', interpolation='None', cmap='viridis', vmin=None, vmax=None, plot_cmap=False, savefig=False, dirname=save_directory, filename='flux_squares', nc_PCA=0, panel=''):
 	fig = plt.figure()
-	im = plt.imshow(square, origin=origin, aspect=aspect, interpolation=interpolation, extent=extent)
+	if vmin and vmax:
+		im = plt.imshow(square, origin=origin, aspect=aspect, interpolation=interpolation, extent=extent, vmin=vmin, vmax=vmax, cmap=cmap)
+	else:
+		im = plt.imshow(square, origin=origin, aspect=aspect, interpolation=interpolation, extent=extent, cmap=cmap)
+	if plot_cmap:
+		cbar = fig.colorbar(im)
+		cbar.set_label('CCF')
 	plt.xlabel(xlabel)
 	plt.ylabel(ylabel)
 	plt.xlim(extent[0],extent[1])
+	#plt.xlim(-100,100)
 	plt.ylim(extent[2],extent[3])
+
+	if len(y_phase) > 0:
+		y_arr = np.arange(len(y_phase))[::int(len(y_phase)/8) + 1]
+		plt.yticks(ticks=y_arr, labels=[f'{y_phase[y]:.3f}' for y in y_arr])
+
+	#plt.axhline(80, ls='dashed', c='k')
+
+	if len(panel) > 0:
+		plt.text(0.15,0.8,f'{panel:3}', fontweight='bold', fontsize=14, transform=fig.transFigure)
+	if nc_PCA > 0:
+		plt.text(0.75,0.8,r'$N_C$'+f'={nc_PCA:2}', fontweight='bold', fontsize=14, transform=fig.transFigure)
 	
 	if savefig:		
-		plt.savefig(dirname+filename+'.pdf')
-		plt.savefig(dirname+filename+'.jpeg', dpi=300)
+		plt.savefig(dirname+filename+'.pdf', bbox_inches='tight')
+		plt.savefig(dirname+filename+'.jpeg', dpi=300, bbox_inches='tight')
 
-	#plt.show()
+	plt.show()
 	plt.close()
 
-def plot_SNR_square(SNR, extent, xlabel, ylabel, vRest, kpVec, l1=[], l2=[], SNR_max=None, vRest_max_idx=None, kpVec_max_idx=None, SNR_inj_sig_pos=None, vRest_inj_sig_pos_idx=None, kpVec_inj_sig_pos_idx=None, origin='lower', aspect='auto', interpolation='None', savefig=False, dirname=save_directory, filename='SNR_square'):
+def plot_multi_squares(squares, extent, xlabel, ylabel, y_phase=[], origin='lower', aspect='auto', interpolation='None', cmap='viridis', vmin=None, vmax=None, plot_cmap=False, savefig=False, dirname=save_directory, filename='flux_squares'):
+	alphabet = ['(a)', '(b)', '(c)', '(d)', '(e)', '(f)', '(g)', '(h)', '(i)', '(j)', '(k)', '(l)', '(m)', '(n)', '(o)', '(p)']	
+	fig, axes = plt.subplots(1, len(squares))
+	for ii in range(len(squares)):
+		im = axes[ii].imshow(squares[ii], origin=origin, aspect=aspect, interpolation=interpolation, extent=extent, vmin=vmin, vmax=vmax, cmap=cmap)
+		axes[ii].text(0.75,0.9,f'{alphabet[ii]:3}', fontweight='bold', fontsize=14, transform=axes[ii].transAxes)
+		axes[ii].tick_params(labelsize=12)
+		axes[ii].set(yticks=[])
+		#axes[ii].set_xlim(extent[0],extent[1])
+		axes[ii].set_xlim(-99,99)
+		axes[ii].set_ylim(extent[2],extent[3])
+
+	if plot_cmap:
+		cbar = fig.colorbar(im)
+		cbar.set_label('CCF')
+
+	#mid_x = (fig.subplotpars.right + fig.subplotpars.left)/2
+	#mid_y = (fig.subplotpars.top + fig.subplotpars.bottom)/2
+	#fig.supxlabel(xlabel, x=mid_x)
+	#fig.supylabel(ylabel, y=mid_y)
+	axes[0].set_ylabel(ylabel, fontsize=12)
+	#axes[0].set_xlabel(xlabel, fontsize=12)
+	axes[1].set_xlabel(xlabel, fontsize=12)
+
+	if len(y_phase) > 0:
+		y_arr = np.arange(len(y_phase))[::int(len(y_phase)/8) + 1]
+		axes[0].set(yticks=y_arr, yticklabels=[f'{y_phase[y]:.3f}' for y in y_arr])
+	
+	plt.tight_layout()
+	plt.subplots_adjust(wspace=0)
+	
+	if savefig:		
+		plt.savefig(dirname+filename+'.pdf', bbox_inches='tight')
+		plt.savefig(dirname+filename+'.jpeg', dpi=300, bbox_inches='tight')
+
+	plt.show()
+	plt.close()
+
+def plot_multi_squares_PCA_comps(squares, extent, xlabel, ylabel, y_phase=[], origin='lower', aspect='auto', interpolation='None', cmap='viridis', vmin=None, vmax=None, nc_PCAs=[], savefig=False, dirname=save_directory, filename='flux_squares'):
+	alphabet = ['(a)', '(b)', '(c)', '(d)', '(e)', '(f)', '(g)', '(h)', '(i)', '(j)', '(k)', '(l)', '(m)', '(n)', '(o)', '(p)']	
+	fig, axes = plt.subplots(2, 3)
+	for jj in range(2):
+		for ii in range(3):
+			im = axes[jj,ii].imshow(squares[ii+(3*jj)], origin=origin, aspect=aspect, interpolation=interpolation, extent=extent, vmin=vmin, vmax=vmax, cmap=cmap)
+			axes[jj,ii].text(0.75,0.85,f'{alphabet[ii+(3*jj)]:3}', fontweight='bold', fontsize=14, transform=axes[jj,ii].transAxes)
+			axes[jj,ii].text(0.65,0.05,r'$N_C$'+f'={nc_PCAs[ii+(3*jj)]:2}', fontweight='bold', fontsize=14, transform=axes[jj,ii].transAxes)
+			axes[jj,ii].tick_params(labelsize=12)
+			axes[jj,ii].set(yticks=[])
+			#axes[jj,ii].set_xlim(extent[0],extent[1])
+			axes[jj,ii].set_xlim(-99,99)
+			axes[jj,ii].set_ylim(extent[2],extent[3])
+
+	#mid_x = (fig.subplotpars.right + fig.subplotpars.left)/2
+	#mid_y = (fig.subplotpars.top + fig.subplotpars.bottom)/2
+	#fig.supxlabel(xlabel, x=mid_x)
+	#fig.supylabel(ylabel, y=mid_y)
+	axes[0,0].set_ylabel(ylabel, fontsize=12)
+	axes[1,0].set_ylabel(ylabel, fontsize=12)
+	axes[1,1].set_xlabel(xlabel, fontsize=12)
+
+	if len(y_phase) > 0:
+		y_arr = np.arange(len(y_phase))[::int(len(y_phase)/6) + 1]
+		axes[0,0].set(yticks=y_arr, yticklabels=[f'{y_phase[y]:.3f}' for y in y_arr])
+		axes[1,0].set(yticks=y_arr, yticklabels=[f'{y_phase[y]:.3f}' for y in y_arr])
+	
+	plt.tight_layout()
+	plt.subplots_adjust(wspace=0, hspace=0)
+	
+	if savefig:		
+		plt.savefig(dirname+filename+'.pdf', bbox_inches='tight')
+		plt.savefig(dirname+filename+'.jpeg', dpi=300, bbox_inches='tight')
+
+	plt.show()
+	plt.close()
+
+def plot_SNR_square(SNR, extent, xlabel, ylabel, vRest, kpVec, l1=[], l2=[], SNR_max=None, vRest_max_idx=None, kpVec_max_idx=None, SNR_inj_sig_pos=None, vRest_inj_sig_pos_idx=None, kpVec_inj_sig_pos_idx=None, origin='lower', aspect='auto', interpolation='None', vmin=None, vmax=None, savefig=False, dirname=save_directory, filename='SNR_square', nc_PCA=3, panel='(a)'):
 	fig = plt.figure()
-	im = plt.imshow(SNR, origin=origin, aspect=aspect, interpolation=interpolation, extent=extent)
+	if vmin and vmax:
+		im = plt.imshow(SNR, origin=origin, aspect=aspect, interpolation=interpolation, extent=extent, vmin=vmin, vmax=vmax)
+	else:
+		im = plt.imshow(SNR, origin=origin, aspect=aspect, interpolation=interpolation, extent=extent)
 	plt.xlabel(xlabel)
 	plt.ylabel(ylabel)
 	if len(l1) > 0:
@@ -788,6 +1123,11 @@ def plot_SNR_square(SNR, extent, xlabel, ylabel, vRest, kpVec, l1=[], l2=[], SNR
 		plt.plot(vRest, l2, ls='dashed', c='black')
 	plt.xlim(extent[0],extent[1])
 	plt.ylim(extent[2],extent[3])
+
+	#plt.text(0.70,0.15,f'{panel:3}', fontweight='bold', fontsize=14, transform=fig.transFigure)
+	#plt.text(0.55,0.15,r'$N_C$'+f'={nc_PCA:2}', fontweight='bold', fontsize=14, transform=fig.transFigure)
+	#plt.text(0.15,0.15,f'{panel:3}', fontweight='bold', fontsize=14, transform=fig.transFigure)
+	#plt.text(0.25,0.15,r'$N_C$'+f'={nc_PCA:2}', fontweight='bold', fontsize=14, transform=fig.transFigure)
 
 	if SNR_max:
 		## Plotting the maximum at the exact location of the injected signal
@@ -800,12 +1140,188 @@ def plot_SNR_square(SNR, extent, xlabel, ylabel, vRest, kpVec, l1=[], l2=[], SNR
 		plabel = f'SNR={np.max(SNR):.2f}\nVrest={vRest[np.where(SNR == np.max(SNR))[1][0]]:.2f}\ km/s\nKp={kpVec[np.where(SNR == np.max(SNR))[0][0]]:.2f}\ km/s'
 		plt.plot(vRest[np.where(SNR == np.max(SNR))[1][0]], kpVec[np.where(SNR == np.max(SNR))[0][0]], '*', c='black', label=plabel)
 		plt.legend(loc='upper left')
+		#plt.legend(loc='upper right')
+		#plt.legend(loc='lower left')
+		#plt.legend(loc='lower right')
 	cbar = fig.colorbar(im)
 	cbar.set_label('SNR')
 	
 	if savefig:		
-		plt.savefig(dirname+filename+'.pdf')
-		plt.savefig(dirname+filename+'.jpeg', dpi=300)
+		plt.savefig(dirname+filename+'.pdf', bbox_inches='tight')
+		plt.savefig(dirname+filename+'.jpeg', dpi=300, bbox_inches='tight')
+
+	plt.show()
+	plt.close()
+
+def plot_multi_SNR_squares(SNRs, extent, xlabel, ylabel, vRest, kpVec, l1=[], l2=[], kpVec_lims=[], vRest_lims=[], SNR_max=None, vRest_max_idx=None, kpVec_max_idx=None, SNR_inj_sig_pos=None, vRest_inj_sig_pos_idx=None, kpVec_inj_sig_pos_idx=None, origin='lower', aspect='auto', interpolation='None', vmin=None, vmax=None, savefig=False, dirname=save_directory, filename='SNR_square', nc_PCA=3, panel='(a)'):
+	alphabet = ['(a)', '(b)', '(c)', '(d)', '(e)', '(f)', '(g)', '(h)', '(i)', '(j)', '(k)', '(l)', '(m)', '(n)', '(o)', '(p)']	
+	fig = plt.figure()
+	axes = []
+
+	gs = GridSpec(1,len(SNRs)+1)
+	#gs.update(bottom=0., top=0.5, left=0.0, right=1.6, wspace=0)
+	gs.update(bottom=0., top=0.5, left=0.0, right=1.3, wspace=0)
+	for ii in range(len(SNRs)):
+		axes.append(plt.subplot(gs[0,ii]))
+		im = axes[ii].imshow(SNRs[ii], origin=origin, aspect=aspect, interpolation=interpolation, extent=extent, vmin=vmin, vmax=vmax)
+		axes[ii].text(0.85,0.05,f'{alphabet[ii]:3}', fontweight='bold', fontsize=14, transform=axes[ii].transAxes)
+		axes[ii].tick_params(labelsize=12)
+		vRest_max = vRest[np.where(SNRs[ii] == SNR_max[ii])[1][0]]
+		kpVec_max = kpVec[np.where(SNRs[ii] == SNR_max[ii])[0][0]]
+		plabel = f'SNR={SNR_max[ii]:.2f}\nVrest={vRest_max:.2f}\ km/s\nKp={kpVec_max:.2f}\ km/s'
+		axes[ii].plot(vRest_max, kpVec_max, 's', c='red', mfc='None', label=plabel)
+		axes[ii].legend(loc='upper left')
+		#axes[ii].legend(loc='upper right')
+		
+		if ii != 0:
+			axes[ii].set(yticks=[])
+		#axes[ii].set_xlim(extent[0],extent[1])
+		axes[ii].set_xlim(-74,74)
+		axes[ii].set_ylim(extent[2],extent[3])
+
+		if len(l1) > 0:
+			axes[ii].plot(vRest, l1, ls='dashed', c='black')
+		if len(l2) > 0:
+			axes[ii].plot(vRest, l2, ls='dashed', c='black')
+
+		if len(kpVec_lims) > 0 and len(vRest_lims) > 0:
+			axes[ii].add_patch(plt.Rectangle((vRest_lims[0],kpVec_lims[0]), vRest_lims[1]-vRest_lims[0], kpVec_lims[1]-kpVec_lims[0], ls='dashed', ec='k', fc='none'))
+
+	axes[0].tick_params(labelsize=12)
+	axes[0].set_xlabel(xlabel, fontsize=12)
+	axes[1].set_xlabel(xlabel, fontsize=12)
+	axes[0].set_ylabel(ylabel, fontsize=12)
+	
+	gs2 = GridSpec(1,len(SNRs)+1)
+	#gs2.update(bottom=0., top=0.5, left=1.13, right=1.25, wspace=0)
+	gs2.update(bottom=0., top=0.5, left=0.83, right=0.90, wspace=0)
+	#gs2.update(bottom=0., top=0.5, left=1.02, right=1.12, wspace=0)
+	cbar_ax = plt.subplot(gs2[0,-1])
+	cbar = fig.colorbar(im, cax=cbar_ax)
+	cbar.set_label('SNR', fontsize=12)
+	cbar.ax.tick_params(labelsize=12)
+
+	if savefig:		
+		plt.savefig(dirname+filename+'.pdf', bbox_inches='tight')
+		plt.savefig(dirname+filename+'.jpeg', dpi=300, bbox_inches='tight')
+
+	plt.show()
+	plt.close()
+
+def plot_multi_SNR_squares_PCA_comps(SNRs, extent, xlabel, ylabel, vRest, kpVec, l1=[], l2=[], kpVec_lims=[], vRest_lims=[], nc_PCAs=[], SNR_max=None, vRest_max_idx=None, kpVec_max_idx=None, SNR_inj_sig_pos=None, vRest_inj_sig_pos_idx=None, kpVec_inj_sig_pos_idx=None, origin='lower', aspect='auto', interpolation='None', vmin=None, vmax=None, savefig=False, dirname=save_directory, filename='SNR_square', nc_PCA=3, panel='(a)'):
+	alphabet = ['(a)', '(b)', '(c)', '(d)', '(e)', '(f)', '(g)', '(h)', '(i)', '(j)', '(k)', '(l)', '(m)', '(n)', '(o)', '(p)']	
+	fig = plt.figure()
+	axes = []
+
+	gs = GridSpec(2,int(len(SNRs))+1)
+	gs.update(bottom=0., top=1, left=0.0, right=3, wspace=0, hspace=0)
+	#gs.update(bottom=0., top=0.5, left=0.0, right=1.3, wspace=0)
+	for jj in range(2):
+		for ii in range(3):
+			axes.append(plt.subplot(gs[jj,ii]))
+			im = axes[ii+3*(jj)].imshow(SNRs[ii+3*(jj)], origin=origin, aspect=aspect, interpolation=interpolation, extent=extent, vmin=vmin, vmax=vmax)
+			axes[ii+3*(jj)].text(0.85,0.05,f'{alphabet[ii+3*(jj)]:3}', fontweight='bold', fontsize=14, transform=axes[ii+3*(jj)].transAxes)
+			axes[ii+3*(jj)].text(0.05,0.60,r'$N_C$'+f'={nc_PCAs[ii+(3*jj)]:2}', fontweight='bold', fontsize=14, transform=axes[ii+3*(jj)].transAxes)
+			axes[ii+3*(jj)].tick_params(labelsize=12)
+			vRest_max = vRest[np.where(SNRs[ii+3*(jj)] == SNR_max[ii+3*(jj)])[1][0]]
+			kpVec_max = kpVec[np.where(SNRs[ii+3*(jj)] == SNR_max[ii+3*(jj)])[0][0]]
+			plabel = f'SNR={SNR_max[ii+3*(jj)]:.2f}\nVrest={vRest_max:.2f}\ km/s\nKp={kpVec_max:.2f}\ km/s'
+			axes[ii+3*(jj)].plot(vRest_max, kpVec_max, 's', c='red', label=plabel)
+			axes[ii+3*(jj)].legend(loc='upper left')
+			
+			if ii != 0:
+				axes[ii+3*(jj)].set(yticks=[])
+			axes[ii+3*(jj)].set_xlim(extent[0],extent[1])
+			axes[ii+3*(jj)].set_ylim(extent[2],extent[3])
+
+			if len(l1) > 0:
+				axes[ii+3*(jj)].plot(vRest, l1, ls='dashed', c='black')
+			if len(l2) > 0:
+				axes[ii+3*(jj)].plot(vRest, l2, ls='dashed', c='black')
+
+			if len(kpVec_lims) > 0 and len(vRest_lims) > 0:
+				axes[ii+3*(jj)].add_patch(plt.Rectangle((vRest_lims[0],kpVec_lims[0]), vRest_lims[1]-vRest_lims[0], kpVec_lims[1]-kpVec_lims[0], ls='dashed', ec='k', fc='none'))
+
+	#axes[0].tick_params(labelsize=12)
+	axes[4].set_xlabel(xlabel, fontsize=12)
+	axes[0].set_ylabel(ylabel, fontsize=12)
+	axes[3].set_ylabel(ylabel, fontsize=12)
+	
+	gs2 = GridSpec(2,int(len(SNRs))+1)
+	gs2.update(bottom=0., top=2.2, left=1.13, right=1.33, wspace=0)
+	#gs2.update(bottom=0., top=0.5, left=0.83, right=0.90, wspace=0)
+	cbar_ax = plt.subplot(gs2[1,-1])
+	cbar = fig.colorbar(im, cax=cbar_ax)
+	cbar.set_label('SNR', fontsize=12)
+	cbar.ax.tick_params(labelsize=12)
+
+	if savefig:		
+		plt.savefig(dirname+filename+'.pdf', bbox_inches='tight')
+		plt.savefig(dirname+filename+'.jpeg', dpi=300, bbox_inches='tight')
+
+	plt.show()
+	plt.close()
+
+def plot_multi_vmap_squares(vmaps, extent, xlabel, ylabel, vRest, kpVec, origin='lower', aspect='auto', interpolation='None', vmin=None, vmax=None, savefig=False, dirname=save_directory, filename='vmap_square'):
+	alphabet = ['(a)', '(b)', '(c)', '(d)', '(e)', '(f)', '(g)', '(h)', '(i)', '(j)', '(k)', '(l)', '(m)', '(n)', '(o)', '(p)']	
+	fig = plt.figure()
+	axes = []
+
+	gs = GridSpec(1,len(vmaps))
+	gs.update(bottom=0., top=0.5, left=0.0, right=1., wspace=0.0001)
+	for ii in range(len(vmaps)):
+		axes.append(plt.subplot(gs[0,ii]))
+		im = axes[ii].imshow(vmaps[ii], origin=origin, aspect=aspect, interpolation=interpolation, extent=extent)
+		axes[ii].text(0.85,0.05,f'{alphabet[ii]:3}', fontweight='bold', fontsize=14, transform=axes[ii].transAxes)
+		axes[ii].tick_params(labelsize=12)
+		if ii != 0:
+			axes[ii].set(yticks=[])
+		axes[ii].set_xlim(extent[0],extent[1])
+		axes[ii].set_ylim(extent[2],extent[3])
+
+	axes[0].tick_params(labelsize=12)
+	axes[0].set_xlabel(xlabel)
+	axes[1].set_xlabel(xlabel)
+	axes[0].set_ylabel(ylabel)
+
+	if savefig:		
+		plt.savefig(dirname+filename+'.pdf', bbox_inches='tight')
+		plt.savefig(dirname+filename+'.jpeg', dpi=300, bbox_inches='tight')
+
+	plt.show()
+	plt.close()
+
+def plot_planet_trail_multi_nights(square, extent, xlabel, ylabel, comb_phases, indiv_phases, RVs, origin='lower', aspect='auto', interpolation='None', cmap='gray', vmin=None, vmax=None, savefig=False, dirname=save_directory, filename='planet_trail_combined', nc_PCA=0, panel=''):
+	fig = plt.figure()
+	if vmin and vmax:
+		im = plt.imshow(square[np.argsort(comb_phases)], origin=origin, aspect=aspect, interpolation=interpolation, extent=extent, vmin=vmin, vmax=vmax, cmap=cmap)
+	else:
+		im = plt.imshow(square[np.argsort(comb_phases)], origin=origin, aspect=aspect, interpolation=interpolation, extent=extent, cmap=cmap)
+	
+	plt.xlabel(xlabel)
+	plt.ylabel(ylabel)
+	plt.xlim(extent[0],extent[1])
+	plt.ylim(extent[2],extent[3])
+
+	plt.yticks([yt for yt in np.arange(len(comb_phases))[::int(len(comb_phases)/8) + 1]], labels=[f'{yt:.3f}' for yt in np.sort(comb_phases)[::int(len(comb_phases)/8) + 1]])
+
+	for ii in range(len(indiv_phases)):
+		#if np.max(np.sort(comb_phases)) != np.max(indiv_phases[ii]):
+		#plt.axhline(np.where(np.sort(comb_phases) == np.min(indiv_phases[ii])), ls='dashed', lw=2., c=CBcols[ii])
+		#plt.axhline(np.where(np.sort(comb_phases) == np.max(indiv_phases[ii])), ls='dashed', lw=2., c=CBcols[ii])
+		ph_idxs = np.zeros_like(indiv_phases[ii])
+		for jj in range(len(ph_idxs)):
+			ph_idxs[jj] = np.where(np.sort(comb_phases) == indiv_phases[ii][jj])[0][0]
+		plt.plot(RVs[ii], ph_idxs, ls='dashed', lw=2., c=CBcols[ii], label=f'Night {ii+1}')
+
+	#comb_RVs = np.concatenate((RVs[0],RVs[1],RVs[2],RVs[3],RVs[4],RVs[5]))
+	#comb_RVs = np.concatenate((all_nights_RVs[0],all_nights_RVs[1],all_nights_RVs[2],all_nights_RVs[3],all_nights_RVs[4],all_nights_RVs[5]))
+	#plt.plot(comb_RVs[np.argsort(comb_phases)], np.arange(len(comb_RVs)), 'o', ms=1., c='red')
+	plt.legend(loc='upper right')
+	
+	if savefig:		
+		plt.savefig(dirname+filename+'.pdf', bbox_inches='tight')
+		plt.savefig(dirname+filename+'.jpeg', dpi=300, bbox_inches='tight')
 
 	#plt.show()
 	plt.close()

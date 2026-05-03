@@ -118,6 +118,9 @@ def create_site_values_file(files, instrument='CARMENES', dirname='../', filenam
 	ESO_instruments = ['ESPRESSO', 'NIRPS']
 	txt = open(dirname+filename, 'w')
 	txt.write('## Target name \t RA \t DEC \t Obs. start date \t BJD at mid-exp \t P(hPa) \t T (K) \t Humidity (%) \t Humidity (ppm) \t Airmass \t Azimuth (deg) \t Elevation (deg) \t Obs. latitude (deg) \t Obs. longitude (deg) \t Obs. altitude (m) \t Barycentric velocity (km/s) \n')
+	txt.write('## BJD at mid-exp \t Phase \t Barycentric velocity (km/s) \n')
+	for i in range(len(BJD)):
+		txt.write(f'{BJD[i]:15.7f} \t {phases[i]:15.7f} \t {V_BERV[i]:15.4f}\n')
 	for i,fname in enumerate(files):
 		f = pyfits.open(fname)
 		hdr = f[0].header
@@ -203,18 +206,21 @@ def get_skymodel_spectra(filename, lam_obs, spec_type='emission'):
 
 	return spec_skymodel
 
-def get_phoenix_spectra(filename_lam, filename_spec, vel_step):
+def get_phoenix_spectra(filename_lam, filename_spec, regrid=False, vel_step=1.0):
 	lam = pyfits.open(filename_lam)[0].data*1e-10 				# Converting wavelength from Angstrom to m
-	spec = pyfits.open(filename_spec)[0].data*1e-7/(1e-2) 		# Flux in erg s^-1 cm^-1 converted to W/m
+	spec = pyfits.open(filename_spec)[0].data*1e-7/(1e-2) 		# Flux in erg s^-1 cm^-1 converted to W m-1
 
-	## Regridding the wavelength distribution to have a constant Delta_lambda/lambda
-	lam_regrid = regrid_wavelength(lam, vel_step)
+	if regrid:
+		## Regridding the wavelength distribution to have a constant Delta_lambda/lambda
+		lam_regrid = regrid_wavelength(lam, vel_step)
 
-	## Interpolating the flux to this new wavelength grid
-	interp = interpolate.interp1d(lam, spec)
-	spec_regrid = interp(lam_regrid)
+		## Interpolating the flux to this new wavelength grid
+		interp = interpolate.interp1d(lam, spec)
+		spec_regrid = interp(lam_regrid)
 
-	return lam_regrid, spec_regrid
+		return lam_regrid, spec_regrid
+	else:
+		return lam, spec
 
 def rot_profile(Dv, vsini, eps):
 	'''
@@ -344,7 +350,7 @@ def get_ggg2020_atm_profiles(date_obs, dirname, molecs, hgt_bot=0.):
 		Xs_atm[molec] = 1e6*np.loadtxt(vmr_file, skiprows=9, usecols=(vmr_header.index(molec)), unpack=True)
 
 	## If the bottom height is above ground level (that is, if the data comes from a certain altitude),
-	## Then we interpolate the profile to this level and set it as the bottom of the profile, removing any
+	## then we interpolate the profile to this level and set it as the bottom of the profile, removing any
 	## points below
 	if hgt_bot > 0.:
 		P_bot = np.interp(hgt_bot, hgt_atm, P_atm)
@@ -750,6 +756,8 @@ def get_spec_from_txt(dirnames, order=None):
 		all_spec_obs = np.empty(0)
 		all_spec_mod = np.empty(0)
 		all_spec_mod_init = np.empty(0)
+		all_spec_mod_with_stel_mod = np.empty(0)
+		all_spec_mod_with_stel_mod_init = np.empty(0)
 		if order:
 			spec_files = glob.glob(dirname+f'/spec_ord_{order}.txt')
 		else:
@@ -762,12 +770,15 @@ def get_spec_from_txt(dirnames, order=None):
 				all_spec_obs = np.concatenate((all_spec_obs, spec_obs))
 				all_spec_mod = np.concatenate((all_spec_mod, spec_mod))
 			except ValueError:
-				lam, spec_obs, spec_mod, spec_mod_init = np.loadtxt(file, unpack=True)
+				lam, spec_obs, spec_mod, spec_mod_init, spec_mod_with_stel_mod, spec_mod_with_stel_mod_init = np.loadtxt(file, unpack=True)
 				all_lam = np.concatenate((all_lam, lam))
 				all_spec_obs = np.concatenate((all_spec_obs, spec_obs))
 				all_spec_mod = np.concatenate((all_spec_mod, spec_mod))
 				all_spec_mod_init = np.concatenate((all_spec_mod_init, spec_mod_init))
-		data.append([all_lam, all_spec_obs, all_spec_mod, all_spec_mod_init])
+				all_spec_mod_with_stel_mod = np.concatenate((all_spec_mod_with_stel_mod, spec_mod_with_stel_mod))
+				all_spec_mod_with_stel_mod_init = np.concatenate((all_spec_mod_with_stel_mod_init, spec_mod_with_stel_mod_init))
+
+		data.append([all_lam, all_spec_obs, all_spec_mod, all_spec_mod_init, all_spec_mod_with_stel_mod, all_spec_mod_with_stel_mod_init])
 
 	return data
 
@@ -795,3 +806,53 @@ def time2phase(time,per,T0):
 	#for ii in range(len(phase)):
 	#	if phase[ii] > 0.5: phase[ii] = phase[ii] - 1
 	return phase
+
+def get_molecfit_models(folders):
+	from subprocess import call
+	#dd = '/home/marceloaron/MarceloAron/PhD/thesis_work/molecfit/'
+	#ddd = dd+'reflex_tmp_products/molecfit/CARMENES/'
+	dd = '/media/marceloaron/New Volume/PhD/thesis_work/molecfit/'
+	ddd = dd
+	folders = glob.glob(ddd+'molecfit_model_1/*')
+	folders.sort()
+	for i,fold in enumerate(folders):
+		f = pyfits.open(fold+'/BEST_FIT_MODEL.fits')
+		date = f[0].header['DATE-OBS'].replace('-','')
+		date_split = date.split(':')
+		date_formatted = date_split[0]+'h'+date_split[1]+'m'+date_split[2]+'s'
+		new_folder = dd+'organised_results/'+date_formatted
+		call(['mkdir', new_folder])
+		files = glob.glob(fold+'/*')
+		for ff in files:
+			call(['mv', ff, new_folder])
+		print(i, fold.split('/')[-1], date_formatted)
+
+	folders = glob.glob(ddd+'molecfit_calctrans_1/*')
+	folders.sort()
+	for i,fold in enumerate(folders):		
+		f = pyfits.open(fold+'/TELLURIC_CORR.fits')				
+		flux = f[1].data
+		date = f[0].header['DATE-OBS'].replace('-','')
+		date_split = date.split(':')
+		date_formatted = date_split[0]+'h'+date_split[1]+'m'+date_split[2]+'s'		
+		#np.savetxt(dd+f"organised_results/{date_formatted}.txt", flux)
+		new_folder = dd+'organised_results/'+date_formatted
+		np.savetxt(new_folder+"/spec.txt", flux)
+		files = glob.glob(fold+'/*')
+		for ff in files:
+			call(['mv', ff, new_folder])
+		print(i, fold.split('/')[-1], date_formatted)
+
+def create_molecfit_cube(files):
+	files = glob.glob(dd+'organised_results/*.txt')
+	files.sort()
+	flux_cube = np.empty((28,0,4080))
+	for ff in files:
+		#lam, flux = np.loadtxt(ff, unpack=True)
+		flux = np.loadtxt(ff, unpack=True)
+		flux_per_order = np.empty((28,4080))
+		for i in range(28):
+			flux_per_order[i,:] = flux[i*4080:(i+1)*4080]
+		flux_cube = np.concatenate((flux_cube, flux_per_order[:,np.newaxis]), axis=1)
+	flux_cube = np.array(flux_cube, dtype=float)
+	np.save(dd+'all_spec_mod_molecfit.npy', flux_cube, allow_pickle=True)

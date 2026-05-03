@@ -64,25 +64,38 @@ def create_GEOS_FP_file_list(dates):
 		txt_asm_2D.write(f"https://portal.nccs.nasa.gov/datashare/gmao_ops/pub/fp/das/Y{sd.year}/M{sd.month:0>2}/D{sd.day:0>2}/GEOS.fp.asm.inst3_2d_asm_Nx.{sd.year}{sd.month:0>2}{sd.day:0>2}_{sd.hour:0>2}{sd.minute:0>2}.V01.nc4\n")
 
 ## Getting the list of dates for which GEOS-FP files are needed, from the observational spectra
-spec_file_list = glob.glob('/media/marceloaron/New Volume/PhD/thesis_work/data/CARMENES/nir/HAT_P_11/*-nir_A.fits')#home_directory+'Astroclimes/data/CARMENES/*-nir_A.fits') 
+par_dir = '/media/marceloaron/New Volume/PhD/thesis_work/data/CARMENES/nir/tauboo/'
+spec_file_list = glob.glob(par_dir+'*201804*nir_A.fits')+glob.glob(par_dir+'*201805*nir_A.fits')+glob.glob(par_dir+'*20190313*nir_A.fits')+glob.glob(par_dir+'*201904*nir_A.fits')
 spec_file_list.sort()
 spec_dates = np.array([f.split('/')[-1].split('-')[1] for f in spec_file_list])
 create_GEOS_FP_file_list(spec_dates)
 
 ## Downloading the GEOS-FP files from the URLs list just created
-download_asm_3D = True
+## Parallel 
+download_all_parallel = True
+if download_all_parallel:
+	GEOS_FP_file_asm_3D = np.loadtxt(parent_directory+'Nv/getFP_asm_Nv.dat', dtype=str)
+	GEOS_FP_file_chm_3D = np.loadtxt(parent_directory+'Nv/getFP_chm_Nv.dat', dtype=str)
+	GEOS_FP_file_asm_2D = np.loadtxt(parent_directory+'Nx/getFP_asm_Nx.dat', dtype=str)
+	for i in range(len(GEOS_FP_file_asm_3D)):
+		call(['wget', GEOS_FP_file_asm_3D[i], '-P', parent_directory+'Nv/'])
+		call(['wget', GEOS_FP_file_chm_3D[i], '-P', parent_directory+'Nv/'])
+		call(['wget', GEOS_FP_file_asm_2D[i], '-P', parent_directory+'Nx/'])
+
+## Sequentially 
+download_asm_3D = False
 if download_asm_3D:
 	GEOS_FP_file_asm_3D = np.loadtxt(parent_directory+'Nv/getFP_asm_Nv.dat', dtype=str)
 	for f in GEOS_FP_file_asm_3D:
 		call(['wget', f, '-P', parent_directory+'Nv/'])
 
-download_chm_3D = True
+download_chm_3D = False
 if download_chm_3D:
 	GEOS_FP_file_chm_3D = np.loadtxt(parent_directory+'Nv/getFP_chm_Nv.dat', dtype=str)
 	for f in GEOS_FP_file_chm_3D:
 		call(['wget', f, '-P', parent_directory+'Nv/'])
 
-download_asm_2D = True
+download_asm_2D = False
 if download_asm_2D:
 	GEOS_FP_file_asm_2D = np.loadtxt(parent_directory+'Nx/getFP_asm_Nx.dat', dtype=str)
 	for f in GEOS_FP_file_asm_2D:

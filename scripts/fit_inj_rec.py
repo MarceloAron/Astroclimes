@@ -6,7 +6,7 @@ import numpy as np
 # =====================================================================================
 # Scripts
 # =====================================================================================
-import pca_functions
+import funcs_telrem
 
 def unpack_global_vars(temp_npy_lam, temp_npy_res):
 	## Unpacking the wavelength distribution and residuals to be compared to the model globally
@@ -60,7 +60,7 @@ def log_likelihood(params, planet_mod_lam, planet_mod, pf, V_BERV, ip, rule_cube
 	fMod = planet_mod - 1
 	fMod *= 10**logsf
 	fMod += 1
-	modseq = pca_functions.create_model_sequence(planet_mod_lam, fMod, lam, pf, Kp, Vsys, V_BERV, ip)
+	modseq = funcs_telrem.create_model_sequence(planet_mod_lam, fMod, lam, pf, Kp, Vsys, V_BERV, ip)
 
 	log_like = get_logL(modseq, residuals, rule_cube)
 
