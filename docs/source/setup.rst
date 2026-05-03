@@ -334,4 +334,4 @@ As for ``slurm_job_setup_inj_rec.sh``, you may run it as below:
 
 >>> sbatch --array=0-15%16 slurm_job_setup_inj_rec.sh ${run_MCMC_AC} ${run_MCMC_PCA} ${nc_PCA}
 
-In this case, the task IDs are used to index the scale factor among a pre-determined list of scale factors. This is the first command line argument that ``setup__inj_rec_slurm.py`` takes, the second one again being the number of CPUs, which is specified in the bash file. The remaining command line arguments that the Python script takes are the ones given to the bash script above. ``${run_MCMC_AC}`` and ``${run_MCMC_PCA}`` can be either 0 (False) or 1 (True) and ``${nc_PCA}`` can be any integer. 
+In this case, the task IDs are used to index the scale factor among a pre-determined list of scale factors. This is the first command line argument that ``setup_inj_rec_slurm.py`` takes, the second one again being the number of CPUs, which is specified in the bash file. The remaining command line arguments that the Python script takes are the ones given to the bash script above. ``${run_MCMC_AC}`` and ``${run_MCMC_PCA}`` can be either 0 (False) or 1 (True) and ``${nc_PCA}`` can be any integer. 
