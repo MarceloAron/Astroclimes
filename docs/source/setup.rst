@@ -2,7 +2,7 @@
 Setting up your runs
 =====
 
-Currently, there are two main analyses that Astroclimes can carry out: the first is to fit telluric model spectra to a sample of spectroscopic observations to find the best-fit values for the abundances of certain molecular species; the second is to use these best-fit telluric models to remove the telluric lines from this same sample of spectroscopic observations. There are two separate setup scripts that run each of the analyses, ``setup.py`` and ``setup_telrem.py``, respectively.
+Currently, there are three main analyses that Astroclimes can carry out: the first is to fit telluric model spectra to a sample of spectroscopic observations to find the best-fit values for the abundances of certain molecular species; the second and third are to use these best-fit telluric models to remove the telluric lines from this same sample of spectroscopic observations to (a) carry out a series of injection and recovery tests or (b) combine data from several nights to try to detect a real exoplanet atmospheric signal. There are three separate setup scripts that run each of the analyses, ``setup.py``, ``setup_inj_rec.py`` and ``setup_retrv_exo_atm.py``, respectively.
 
 Run to find best-fit molecular abundance values
 -----
@@ -80,16 +80,19 @@ Run to find best-fit molecular abundance values
 	:guilabel:`spec_orders` = 
 	spectral orders to be included in the analysis.
 
+	:guilabel:`deep_line_threshold` = 
+	minimum transmission below which points will be deemed too deep and masked out of the analysis when looking for the best-fit telluric models.
+
 Once all of the parameters are specified, you can run the script by doing:
 
 >>> python setup.py
 
-Run to remove telluric lines
+Run to carry out injection and recovery tests
 -----
-In its current version, ``setup_telrem.py`` will do more than just remove telluric and stellar lines from the selected spectra. It will first run an automatic check for bad observations based on their measured SNR and airmass (whose limits can be customly specified) and then carry out several injection and retrieval tests for Astroclimes and Principal Component Analysis (PCA; as described in `Giacobbe et al. 2021 <https://www.nature.com/articles/s41586-021-03381-x>`_), where the level of erosion of the planetary signal is determined with an MCMC. IMPORTANT: there are two different MCMCs referenced here. The first MCMC, which is run by ``setup.py``, will be referred to as the "molecular abundance MCMC", whereas the second MCMC, run by ``setup_telrem.py``, will be referred to as the "telluric removal MCMC". Just as before, there are a number of variables inside ``setup_telrem.py`` that you need to specify, which are listed and explained below. Also note that ``setup.py`` must be run beforehnd, as its data products are used by ``setup_telrem.py``.
+``setup_inj_rec.py`` will first run an automatic check for bad observations based on their measured SNR and airmass (whose limits can be customly specified) and then carry out several injection and retrieval tests for Astroclimes and Principal Component Analysis (PCA; as described in `Giacobbe et al. 2021 <https://www.nature.com/articles/s41586-021-03381-x>`_), where the level of erosion of the planetary signal is determined with an MCMC. IMPORTANT: there are two different MCMCs referenced here. The first MCMC, which is run by ``setup.py``, will be referred to as the "molecular abundance MCMC", whereas the second MCMC, run by ``setup_inj_rec.py``, will be referred to as the "injection and recovery MCMC". Just as before, there are a number of variables inside ``setup_inj_rec.py`` that you need to specify, which are listed and explained below. Also note that ``setup.py`` must be run beforehand, as its data products are used by ``setup_inj_rec.py``.
 
 	:guilabel:`n_CPUs` = 
-	number of CPUs to use (choose more than 1 if you wish to use multiprocessing in the telluric removal MCMC).
+	number of CPUs to use (choose more than 1 if you wish to use multiprocessing in the injection and recovery MCMC).
 
 	:guilabel:`home_directory` = 
 	path to parent directory where files and subdirectories will be saved.
@@ -98,7 +101,7 @@ In its current version, ``setup_telrem.py`` will do more than just remove tellur
 	path to subdirectory where results and plots from the molecular abundance MCMC were saved.
 
 	:guilabel:`filename_mcmc_results` = 
-	file name (with path) where the molecular abundance MCMC results were be written.
+	file name (with path) where the molecular abundance MCMC results were written.
 
 	:guilabel:`atm_profs_directory` = 
 	path to subdirectory where atmospheric profiles are stored.
@@ -121,11 +124,17 @@ In its current version, ``setup_telrem.py`` will do more than just remove tellur
 	:guilabel:`n_pixels` = 
 	number of pixels each spectral order of the instrument has.
 
-	:guilabel:`main_telrem_directory` = 
-	path to subdirectory where results from this telluric removal analysis will be sored.
+	:guilabel:`stelpars` = 
+	Python object to store the stellar parameters. Here, the parameters needed are the star's effective temperature :math:`T_\text{eff}` and radius `R`.
+
+	:guilabel:`orbpars` = 
+	Python object to store the orbital parameters. Here, the parameters needed are the systemic velocity :math:`V_\text{sys}`, the planet RV semi-amplitude :math:`K_p`, the planet radius :math:`R_p`, the planet's orbital period `P` and mid-transit time :math:`T_0`.
+
+	:guilabel:`main_inj_rec_directory` = 
+	path to subdirectory where results from the injection and recovery tests will be sored.
 
 	:guilabel:`filename_site_values` = 
-	file name (with path) where the information about the observations, the observing site and the weather conditions will be written. As a default, it will be saved in :guilabel:`main_telrem_directory`. This is exactly the same file as before, so if one so chooses, there is no need to create another copy, just specify the path to the previously created one.
+	file name (with path) where the information about the observations, the observing site and the weather conditions will be written. As a default, it will be saved in :guilabel:`main_inj_rec_directory`. This is exactly the same file as before, so if one so chooses, there is no need to create another copy, just specify the path to the previously created one.
 
 	:guilabel:`molecs` = 
 	list containing names of the molecules to be included in the modelling via line-by-line absorption.
@@ -143,13 +152,13 @@ In its current version, ``setup_telrem.py`` will do more than just remove tellur
 	measured airmass limit above which observations will be discarded.
 
 	:guilabel:`add_bad_obs` = 
-	any additional observations that the user wants to remove that may not have been included in the automatic SNR and airmass screening.
+	any additional observations that the user wants to manually remove that may not have been included in the automatic SNR and airmass screening.
 
 	:guilabel:`create_SNR_night_log` = 
 	boolean variable specifying whether or not to create a text file with the measured SNR for each observation of that night.
 
-	:guilabel:`make_airmass_SNR_plot` = 
-	boolean variable specifying whether or not to plot the measured SNR and airmass distribution as a function of time.
+	:guilabel:`make_obs_conds_plot` = 
+	boolean variable specifying whether or not to plot the observing conditions as a function of orbital phase. Currently, the parameters plotted are airmass, relative humidity, PWV and measured instrumental SNR.
 
 	:guilabel:`scale_factors` = 
 	list of scale factors which will be used to multiply the model planetary signal.
@@ -157,29 +166,26 @@ In its current version, ``setup_telrem.py`` will do more than just remove tellur
 	:guilabel:`nc_PCA` = 
 	number of PCA components.
 
-	:guilabel:`filename_telrem_SNR_AC` = 
-	name of the file where the calculated Astroclimes SNRs will be written. These SNRs are not the measured SNRs from the observational spectra, but rather the SNRs of the detected planetary signal for each injected planetary signal strength. As a default, it will be saved in :guilabel:`main_telrem_directory`.
+	:guilabel:`deep_line_threshold` = 
+	minimum transmission below which points will be deemed too deep and masked out of the analysis when calculating the CCF and on the MCMC to determine how much the injected planetary signal has changed.
 
-	:guilabel:`filename_telrem_SNR_PCA` = 
-	name of the file where the calculated PCA SNRs will be written. These SNRs are not the measured SNRs from the observational spectra, but rather the SNRs of the detected planetary signal for each injected planetary signal strength. As a default, it will be saved in :guilabel:`main_telrem_directory`.
+	:guilabel:`filename_inj_rec_SNR_AC` = 
+	name of the file where the calculated Astroclimes SNRs will be written. These SNRs are not the measured SNRs from the observational spectra, but rather the SNRs of the detected planetary signal for each injected planetary signal strength. As a default, it will be saved in :guilabel:`main_inj_rec_directory`.
 
-	:guilabel:`filename_telrem_MCMC_results_AC` = 
-	name of the file where the telluric removal MCMC results for Astroclimes will be written. As a default, it will be saved in :guilabel:`main_telrem_directory`.
+	:guilabel:`filename_inj_rec_SNR_PCA` = 
+	name of the file where the calculated PCA SNRs will be written. These SNRs are not the measured SNRs from the observational spectra, but rather the SNRs of the detected planetary signal for each injected planetary signal strength. As a default, it will be saved in :guilabel:`main_inj_rec_directory`.
 
-	:guilabel:`filename_telrem_MCMC_results_PCA` = 
-	name of the file where the telluric removal MCMC results for PCA will be written. As a default, it will be saved in :guilabel:`main_telrem_directory`.
+	:guilabel:`filename_inj_rec_MCMC_results_AC` = 
+	name of the file where the injection and recovery MCMC results for Astroclimes will be written. As a default, it will be saved in :guilabel:`main_inj_rec_directory`.
+
+	:guilabel:`filename_inj_rec_MCMC_results_PCA` = 
+	name of the file where the injection and recovery MCMC results for PCA will be written. As a default, it will be saved in :guilabel:`main_inj_rec_directory`.
 
 	:guilabel:`filename_planet_lam` = 
 	name of the file (with path) containing the wavelength distribution of the planet model.
 
 	:guilabel:`filename_planet_spec` = 
 	name of the file (with path) containing the flux of the planet model.
-
-	:guilabel:`stelpars` = 
-	Python object to store the stellar parameters. Here, the parameters needed are the star's effective temperature :math:`T_\text{eff}` and radius `R`.
-
-	:guilabel:`orbpars` = 
-	Python object to store the orbital parameters. Here, the parameters needed are the systemic velocity :math:`V_\text{sys}`, the planet RV semi-amplitude :math:`K_p`, the planet radius :math:`R_p`, the planet's orbital period `P` and mid-transit time :math:`T_0`.
 
 	:guilabel:`plot_telrem_steps_AC` = 
 	boolean variable specifying whether or not to plot the step-by-step of the telluric and stellar line removal with Astroclimes. As a default, this plot (and the two plots below) will be made for spectral order 12 (in the CARMENES spectral order distribution, this is an order which contains several typically non-saturated water lines).
@@ -188,28 +194,144 @@ In its current version, ``setup_telrem.py`` will do more than just remove tellur
 	boolean variable specifying whether or not to plot the step-by-step of the telluric and stellar line removal with PCA.
 
 	:guilabel:`plot_indiv_PCA_comps` = 
-	boolean variable specifying whether or not to plot the contributions of each PCA component. As a default, this will plot the first 6 PCA components, regardless of how many are included in the analysis. 
+	boolean variable specifying whether or not to plot the contributions of each PCA component. As a default, this will plot the first 6 PCA components plus the 10th component, regardless of how many are included in the analysis. 
 
 	:guilabel:`run_MCMC_AC` = 
-	boolean variable specifying whether or not to run the telluric removal MCMC for Astroclimes.
+	boolean variable specifying whether or not to run the injection and recovery MCMC for Astroclimes.
 
 	:guilabel:`run_MCMC_PCA` = 
-	boolean variable specifying whether or not to run the telluric removal MCMC for PCA.
+	boolean variable specifying whether or not to run the injection and recovery MCMC for PCA.
 
 Once all of the parameters are specified, you can run the script by doing:
 
->>> python setup_telrem.py
+>>> python setup_inj_rec.py
+
+Run to search for a detection of a real atmospheric signal
+-----
+``setup_retrv_exo_atm.py`` works very similarly to ``setup_inj_rec.py``, but now instead of injecting signals of different strengths and calculating the strength of the detection, it combined data from several nights and then calculates the strength of the detection. The script first carries out the detrending with Astroclimes and PCA for all nights specified, then calculates the CCF for each individual night, and finally combines the CCFs for all nights. Again, just as before, there are a number of variables inside ``setup_retrv_exo_atm.py`` that you need to specify, which are listed and explained below. Again, ``setup.py`` must be run beforehand.
+
+	:guilabel:`home_directory` = 
+	path to parent directory where files and subdirectories will be saved.
+
+	:guilabel:`atm_profs_directory` = 
+	path to subdirectory where atmospheric profiles are stored.
+
+	:guilabel:`obs_directory` = 
+	path to subdirectory where observations are stored.
+
+	:guilabel:`nights` = 
+	specifying the observing nights used in the analysis as strings with the format YYYY_MM_DD.
+
+	:guilabel:`MCMC_directories` = 
+	list containing the paths to the subdirectories where the results from the molecular abundance MCMC were saved for each night.
+
+	:guilabel:`filename_mcmc_results` = 
+	list of file names (with path) where the molecular abundance MCMC results were written for each night.
+
+	:guilabel:`list_science_spectra` = 
+	list of lists containing the file names of the spectroscopic observations to be analysed, each entry corresponding to the list of files for each night.
+
+	:guilabel:`instrument` = 
+	string containing the instrument name. Current instruments supported are: CARMENES (NIRPS and ESPRESSO in prep.).
+
+	:guilabel:`R_instrument` = 
+	resolution of the selected instrument. Given as a list, each entry corresponding to a different night.
+
+	:guilabel:`n_orders` = 
+	number of spectral orders the instrument data is divided into. Given as a list, each entry corresponding to a different night.
+
+	:guilabel:`n_pixels` = 
+	number of pixels each spectral order of the instrument has. Given as a list, each entry corresponding to a different night.
+
+	:guilabel:`stelpars` = 
+	Python object to store the stellar parameters. Here, the parameters needed are the star's effective temperature :math:`T_\text{eff}` and radius `R`.
+
+	:guilabel:`orbpars` = 
+	Python object to store the orbital parameters. Here, the parameters needed are the systemic velocity :math:`V_\text{sys}`, the planet RV semi-amplitude :math:`K_p`, the planet radius :math:`R_p`, the planet's orbital period `P` and mid-transit time :math:`T_0`.
+
+	:guilabel:`main_retrv_exo_directory` = 
+	path to subdirectory where results from the this analysis will be stored.
+
+	:guilabel:`filename_site_values` = 
+	file name (with path) where the information about the observations, the observing site and the weather conditions will be written. As a default, it will be saved in :guilabel:`main_retrv_exo_directory`. This is exactly the same file as before, so if one so chooses, there is no need to create another copy, just specify the path to the previously created one. Given as a list, each entry corresponding to a different night.
+
+	:guilabel:`molecs` = 
+	list containing names of the molecules to be included in the modelling via line-by-line absorption.
+
+	:guilabel:`molecs_for_cia` = 
+	list containing the reaction pairs to be included in the modellign via collision-induced absorption (CIA).
+
+	:guilabel:`bad_spec_orders_idxs` = 
+	indexes identifying the bad spectral orders to be excluded from the analysis (due to densely populated saturated telluric water lines or any other reason). Given as a list, each entry corresponding to a different night.
+
+	:guilabel:`SNR_lim` = 
+	measured SNR limit below which observations will be discarded. Given as a list, each entry corresponding to a different night.
+
+	:guilabel:`airmass_lim` = 
+	measured airmass limit above which observations will be discarded. Given as a list, each entry corresponding to a different night.
+
+	:guilabel:`add_bad_obs` = 
+	any additional observations that the user wants to manually remove that may not have been included in the automatic SNR and airmass screening. Given as a list, each entry corresponding to a different night.
+
+	:guilabel:`create_SNR_night_log` = 
+	boolean variable specifying whether or not to create a text file with the measured SNR for each observation of that night.
+
+	:guilabel:`make_obs_conds_plot` = 
+	boolean variable specifying whether or not to plot the observing conditions as a function of orbital phase. Currently, the parameters plotted are airmass, relative humidity, PWV and measured instrumental SNR.
+
+	:guilabel:`nc_PCAs` = 
+	number of PCA components. Given as a list, each entry corresponding to a different night.
+
+	:guilabel:`deep_line_threshold` = 
+	minimum transmission below which points will be deemed too deep and masked out of the analysis when calculating the CCF and on the MCMC to determine how much the injected planetary signal has changed.
+
+	:guilabel:`filename_retrv_exo_SNR_AC` = 
+	name of the file where the calculated Astroclimes SNRs will be written. These SNRs are not the measured SNRs from the observational spectra, but rather the SNRs of a potential planetary signal. As a default, it will be saved in :guilabel:`main_retrv_exo_directory`.
+
+	:guilabel:`filename_retrv_exo_SNR_PCA` = 
+	name of the file where the calculated PCA SNRs will be written. These SNRs are not the measured SNRs from the observational spectra, but rather the SNRs of a potential planetary signal. As a default, it will be saved in :guilabel:`main_retrv_exo_directory`.
+
+	:guilabel:`make_gen_cube_plots` = 
+	boolean variable specifying whether or not to plot general plots showing the observational spectra cubes, the Astroclimes/PCA model cubes, and their respective residual cubes.
+
+	:guilabel:`plot_telrem_steps_AC` = 
+	boolean variable specifying whether or not to plot the step-by-step of the telluric and stellar line removal with Astroclimes. As a default, this plot (and the two plots below) will be made for spectral order 12 (in the CARMENES spectral order distribution, this is an order which contains several typically non-saturated water lines).
+
+	:guilabel:`plot_telrem_steps_PCA` = 
+	boolean variable specifying whether or not to plot the step-by-step of the telluric and stellar line removal with PCA.
+
+	:guilabel:`plot_indiv_PCA_comps` = 
+	boolean variable specifying whether or not to plot the contributions of each PCA component. As a default, this will plot the first 6 PCA components plus the 10th component, regardless of how many are included in the analysis. 
+
+	:guilabel:`dirname_for_plots` = 
+	path to subdirectory where the plots associated with this analysis will be stored. By default, it is :guilabel:`main_retrv_exo_directory` + ``'plots/'``.
+
+	:guilabel:`numpy_objs_directory` = 
+	path to subdirectory where some NumPy objects containing results associated with this analysis will be stored. By default, it is :guilabel:`main_retrv_exo_directory` + ``'analysis_files/'``.
+
+	:guilabel:`filename_planet_lam` = 
+	name of the file (with path) containing the wavelength distribution of the planet model that will be used to cross-correlate with the data to search for a detection.
+
+	:guilabel:`filename_planet_spec` = 
+	name of the file (with path) containing the flux of the planet model.
+
+	:guilabel:`SNR_lines_params` = 
+	list containing the parameters that define the straight lines marking the "signal" and "noise" regions in the SNR plots. Each entry is correspondent to a different night and has a list containing two numbers, which are the :math:`a` and :math:`b` coefficients in the formula :math:`y = a*x + b`.
+
+Once all of the parameters are specified, you can run the script by doing:
+
+>>> python setup_retrv_exo_atm.py
 
 SLURM runs
 -----
-If you have the ability of running code in a server that supports a batch system like SLURM, you can speed up the analysis process by running the SLURM-tailored versions of ``setup.py`` and ``setup_telrem.py``. They are basically the same, with just additional/alternative command line arguments, and have to be run through the bash scripts ``slurm_job_setup.sh`` and ``slurm_job_setup_telrem.sh``, respectively, where you can specify things such as how may CPUs you want per task and how much memory to allocate per CPU. You may run the former as shown below:
+If you have the ability of running code in a server that supports a batch system like SLURM, you can speed up the analysis process by running the SLURM-tailored versions of ``setup.py`` and ``setup_inj_rec.py``. They are basically the same, with just additional/alternative command line arguments, and have to be run through the bash scripts ``slurm_job_setup.sh`` and ``slurm_job_setup_inj_rec.sh``, respectively, where you can specify things such as how may CPUs you want per task and how much memory to allocate per CPU. You may run the former as shown below:
 
 >>> sbatch --array=0-99%10 slurm_job_setup.sh
 
 The ``--array`` option will run ``slurm_job_setup.sh`` 100 times, with task IDs ranging from 0 to 99, in batches of 10 (of course, you may change that to suit your case). The task ID is used to index which file from your list of observations will be analysed. That is one of the command line arguments given to ``setup_slurm.py``, the other being the number of CPUs, which must be specified in the bash script.
 
-As for ``slurm_job_setup_telrem.sh``, you may run it as below:
+As for ``slurm_job_setup_inj_rec.sh``, you may run it as below:
 
->>> sbatch --array=0-15%16 slurm_job_setup_telrem.sh ${run_MCMC_AC} ${run_MCMC_PCA} ${nc_PCA}
+>>> sbatch --array=0-15%16 slurm_job_setup_inj_rec.sh ${run_MCMC_AC} ${run_MCMC_PCA} ${nc_PCA}
 
-In this case, the task IDs are used to index the scale factor among a pre-determined list of scale factors. This is the first command line argument that ``setup_telrem_slurm.py`` takes, the second one again being the number of CPUs, which is specified in the bash file. The remaining command line arguments that the Python script takes are the ones given to the bash script above. ``${run_MCMC_AC}`` and ``${run_MCMC_PCA}`` can be either 0 (False) or 1 (True) and ``${nc_PCA}`` can be any integer. 
+In this case, the task IDs are used to index the scale factor among a pre-determined list of scale factors. This is the first command line argument that ``setup_inj_rec_slurm.py`` takes, the second one again being the number of CPUs, which is specified in the bash file. The remaining command line arguments that the Python script takes are the ones given to the bash script above. ``${run_MCMC_AC}`` and ``${run_MCMC_PCA}`` can be either 0 (False) or 1 (True) and ``${nc_PCA}`` can be any integer. 
