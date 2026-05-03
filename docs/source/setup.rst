@@ -304,10 +304,10 @@ Run to search for a detection of a real atmospheric signal
 	boolean variable specifying whether or not to plot the contributions of each PCA component. As a default, this will plot the first 6 PCA components plus the 10th component, regardless of how many are included in the analysis. 
 
 	:guilabel:`dirname_for_plots` = 
-	path to subdirectory where the plots associated with this analysis will be stored. By default, it is :guilabel:`main_retrv_exo_directory`+'plots/'.
+	path to subdirectory where the plots associated with this analysis will be stored. By default, it is :guilabel:`main_retrv_exo_directory` + ``'plots/'``.
 
 	:guilabel:`numpy_objs_directory` = 
-	path to subdirectory where some NumPy objects containing results associated with this analysis will be stored. By default, it is :guilabel:`main_retrv_exo_directory`+'analysis_files/'.
+	path to subdirectory where some NumPy objects containing results associated with this analysis will be stored. By default, it is :guilabel:`main_retrv_exo_directory` + ``'analysis_files/'``.
 
 	:guilabel:`filename_planet_lam` = 
 	name of the file (with path) containing the wavelength distribution of the planet model that will be used to cross-correlate with the data to search for a detection.
