@@ -17,7 +17,7 @@ The GitHub installation comes with all of the necessary Python scripts and some 
 5. The files with the coefficients necessary to calculate the collision-induced absorption (CIA) for :math:`O_2` collisions with other atmospheric particles. If needed, other coefficients are available on the `HITRAN database <https://www.hitran.org/cia/>`_. 
 6. Some model planetary emission spectra computed with GENESIS (`Gandhi & Madhusudhan 2017 <https://ui.adsabs.harvard.edu/abs/2017MNRAS.472.2334G/abstract>`_) with differing water abundances.
 
-Due to their large file size, the molecular cross_sections for line-by-line absorption are not included in the GitHub repository, but can be downloaded from `Google Drive <https://drive.google.com/drive/folders/1Awtc4UlRM1GR_sOg3eOVMGlF5WyD3Wue?usp=sharing>`_. Cross-sections for other molecules not included may be provided upon request. 
+Due to their large file size, the molecular cross_sections for line-by-line absorption are not included in the GitHub repository, but can be downloaded from `Google Drive <https://drive.google.com/drive/folders/1ARW12a5m8NDRflGA4700463qX5coK6tb?usp=sharing>`_. Cross-sections for other molecules not included may be provided upon request.
 
 .. _ACprerequisites:
 Pre-requisites
