@@ -83,11 +83,11 @@ def get_header_data(hdr, instrument):
 		date_obs = Time(hdr['DATE-OBS'], format='isot', scale='utc') 		## UTC at start of exposure
 		BJD = hdr['HIERARCH CARACAL BJD'] + 2400000							# Barycentric Julian Day at middle of exposure
 		P_site = hdr['HIERARCH CAHA GEN AMBI PRESSURE'] 					# Pressure in hPa
-		P_site = np.log10(P_site*100) 										# Converting the pressure from hPa to log(Pa)
 		T_site = hdr['HIERARCH CAHA GEN AMBI TEMPERATURE']+273.15 			# Temperature in ºC, converted to K
 		hgt_site = hdr['HIERARCH CAHA TEL GEOELEV']							# Height above sea level, in m
 		relhum_site = hdr['HIERARCH CAHA GEN AMBI RHUM']					# Relative humidity, in %
 		relhum_site_ppmv = relhum2ppmv(T_site, P_site, relhum_site)			# Converting relative humidity to ppmv
+		P_site = np.log10(P_site*100) 										# Converting the pressure from hPa to log(Pa)
 		airmass = hdr['AIRMASS'] 											# Airmass at the start of exposure
 		try:
 			V_BERV = hdr['HIERARCH CARACAL BERV']					 		# Barycentric correction (in km/s), from BarCor
@@ -98,11 +98,11 @@ def get_header_data(hdr, instrument):
 		date_obs = Time(hdr['DATE-OBS'], format='isot', scale='utc') 									## UTC at start of exposure
 		BJD = hdr['HIERARCH ESO QC BJD'] 																# Barycentric Julian Day (TDB) at middle of exposure
 		P_site = 0.5*(hdr['HIERARCH ESO TEL AMBI PRES START']+hdr['HIERARCH ESO TEL AMBI PRES END']) 	# Pressure in hPa (mean between start and end of exposure)
-		P_site = np.log10(P_site*100) 																	# Converting the pressure from hPa to log(Pa)
 		T_site = hdr['HIERARCH ESO TEL AMBI TEMP']+273.15 												# Temperature in ºC, converted to K
 		hgt_site = hdr['HIERARCH ESO TEL GEOELEV']														# Height above sea level, in m
 		relhum_site = hdr['HIERARCH ESO TEL AMBI RHUM']													# Relative humidity, in %
 		relhum_site_ppmv = relhum2ppmv(T_site, P_site, relhum_site)										# Converting relative humidity to ppmv
+		P_site = np.log10(P_site*100) 																	# Converting the pressure from hPa to log(Pa)
 		airmass = 0.5*(hdr['HIERARCH ESO TEL AIRM END']+hdr['HIERARCH ESO TEL AIRM START'])				# Mean of airmass at start and end of exposure
 		try:
 			V_BERV = hdr['HIERARCH ESO QC BERV'] 														# Barycentric correction, in km/s
