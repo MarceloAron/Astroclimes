@@ -26,7 +26,8 @@ R_Jup = 6.9911*1e7	# Jupiter radius, in m (from NASA Jupiter Fact Sheet)
 n_CPUs = 6
 
 ## Define your home directory
-home_directory = '/home/Astroclimes/'
+#home_directory = '/home/Astroclimes/'
+home_directory = '/media/marceloaron/New Volume/PhD/thesis_work/'
 
 ## Specifying the observing night. For this script, this is only necessary to run funcs_telrem.filter_bad_obs(), as this function is tailored to run more many nights 
 ## For the injection and recovery tests, however, only one night is used
@@ -45,7 +46,6 @@ atm_profs_directory = home_directory+'atmosphere_profiles/GGG2020/fp/al/'
 
 ## Define the directory path to where observations are stored
 obs_directory = home_directory+'data/CARMENES/nir/tauboo/'
-#obs_directory = '/home/marceloaron/MarceloAron/PhD/thesis_work/Astroclimes/data/CARMENES/'
 
 ## Creating list of the observation file names to be analysed
 ## Here we are specifying that we only want the NIR files from fibre A, which is a syntax specific to CARMENES, 
@@ -73,7 +73,7 @@ orbpars.T0 = 2455652.108	# Planet mid-transit time, in HJD, from Brogi et al. (2
 orbpars.Rp = 1.2*R_Jup		# Planet radius in m, from Webb et al. (2022)
 
 ## Define directory where the telluric removal results will be stored
-main_inj_rec_directory = home_directory+'telluric_removal/TauBoo/2018_03_26/'
+main_inj_rec_directory = home_directory+'telluric_removal/TauBoo/2018_03_26_Kp_110/'
 if not os.path.isdir(main_inj_rec_directory):
 	call(['mkdir', main_inj_rec_directory])
 
@@ -210,7 +210,7 @@ plot_telrem_steps_PCA = True
 plot_indiv_PCA_comps = True
 
 ## Decide if you want to run the MCMC for AC or PCA (this MCMC is to determine the erosion of the injected signal)
-run_MCMC_AC = False
+run_MCMC_AC = True
 run_MCMC_PCA = False
 
 inj_rec.run_inj_rec(main_inj_rec_directory=main_inj_rec_directory, 

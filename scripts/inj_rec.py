@@ -319,16 +319,16 @@ def run_inj_rec(main_inj_rec_directory, filename_site_values, R_instrument, n_or
 
 		if plot_indiv_PCA_comps:
 			## Plotting the difference between each PCA component
-			all_pca_fit_wps_1 = funcs_telrem.run_pca(all_lam, all_spec_wps_corr, 1, generate=False, save_dirname=dirname, save_filename='all_pca_fit_wps')
-			all_pca_fit_wps_2 = funcs_telrem.run_pca(all_lam, all_spec_wps_corr, 2, generate=False, save_dirname=dirname, save_filename='all_pca_fit_wps')
-			all_pca_fit_wps_3 = funcs_telrem.run_pca(all_lam, all_spec_wps_corr, 3, generate=False, save_dirname=dirname, save_filename='all_pca_fit_wps')
-			all_pca_fit_wps_4 = funcs_telrem.run_pca(all_lam, all_spec_wps_corr, 4, generate=False, save_dirname=dirname, save_filename='all_pca_fit_wps')
-			all_pca_fit_wps_5 = funcs_telrem.run_pca(all_lam, all_spec_wps_corr, 5, generate=False, save_dirname=dirname, save_filename='all_pca_fit_wps')
-			all_pca_fit_wps_6 = funcs_telrem.run_pca(all_lam, all_spec_wps_corr, 6, generate=False, save_dirname=dirname, save_filename='all_pca_fit_wps')
-			#all_pca_fit_wps_7 = funcs_telrem.run_pca(all_lam, all_spec_wps_corr, 7, generate=False, save_dirname=dirname, save_filename='all_pca_fit_wps')
-			#all_pca_fit_wps_8 = funcs_telrem.run_pca(all_lam, all_spec_wps_corr, 8, generate=False, save_dirname=dirname, save_filename='all_pca_fit_wps')
-			all_pca_fit_wps_9 = funcs_telrem.run_pca(all_lam, all_spec_wps_corr, 9, generate=False, save_dirname=dirname, save_filename='all_pca_fit_wps')
-			all_pca_fit_wps_10 = funcs_telrem.run_pca(all_lam, all_spec_wps_corr, 10, generate=False, save_dirname=dirname, save_filename='all_pca_fit_wps')
+			all_pca_fit_wps_1 = funcs_telrem.run_pca(all_lam, all_spec_wps_corr, 1, generate=True, save_dirname=dirname, save_filename='all_pca_fit_wps')
+			all_pca_fit_wps_2 = funcs_telrem.run_pca(all_lam, all_spec_wps_corr, 2, generate=True, save_dirname=dirname, save_filename='all_pca_fit_wps')
+			all_pca_fit_wps_3 = funcs_telrem.run_pca(all_lam, all_spec_wps_corr, 3, generate=True, save_dirname=dirname, save_filename='all_pca_fit_wps')
+			all_pca_fit_wps_4 = funcs_telrem.run_pca(all_lam, all_spec_wps_corr, 4, generate=True, save_dirname=dirname, save_filename='all_pca_fit_wps')
+			all_pca_fit_wps_5 = funcs_telrem.run_pca(all_lam, all_spec_wps_corr, 5, generate=True, save_dirname=dirname, save_filename='all_pca_fit_wps')
+			all_pca_fit_wps_6 = funcs_telrem.run_pca(all_lam, all_spec_wps_corr, 6, generate=True, save_dirname=dirname, save_filename='all_pca_fit_wps')
+			#all_pca_fit_wps_7 = funcs_telrem.run_pca(all_lam, all_spec_wps_corr, 7, generate=True, save_dirname=dirname, save_filename='all_pca_fit_wps')
+			#all_pca_fit_wps_8 = funcs_telrem.run_pca(all_lam, all_spec_wps_corr, 8, generate=True, save_dirname=dirname, save_filename='all_pca_fit_wps')
+			all_pca_fit_wps_9 = funcs_telrem.run_pca(all_lam, all_spec_wps_corr, 9, generate=True, save_dirname=dirname, save_filename='all_pca_fit_wps')
+			all_pca_fit_wps_10 = funcs_telrem.run_pca(all_lam, all_spec_wps_corr, 10, generate=True, save_dirname=dirname, save_filename='all_pca_fit_wps')
 			comp_1 = all_pca_fit_wps_1[chosen_order_idx,:,:] 
 			comp_2 = all_pca_fit_wps_2[chosen_order_idx,:,:] - all_pca_fit_wps_1[chosen_order_idx,:,:]
 			comp_3 = all_pca_fit_wps_3[chosen_order_idx,:,:] - all_pca_fit_wps_2[chosen_order_idx,:,:]

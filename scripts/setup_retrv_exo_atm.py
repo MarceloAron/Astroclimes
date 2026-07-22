@@ -25,7 +25,8 @@ R_Sun = 6.957*1e8	# Solar radius, in m (from NASA Sun Fact Sheet)
 R_Jup = 6.9911*1e7	# Jupiter radius, in m (from NASA Jupiter Fact Sheet)
 
 ## Define your home directory
-home_directory = '/home/Astroclimes/'
+#home_directory = '/home/Astroclimes/'
+home_directory = '/media/marceloaron/New Volume/PhD/thesis_work/'
 
 ## Directory path for the atmospheric profiles
 ## If GGG2020 atmospheric profiles are being used, this path must point to the directory where

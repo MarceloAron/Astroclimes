@@ -118,9 +118,6 @@ def create_site_values_file(files, instrument='CARMENES', dirname='../', filenam
 	ESO_instruments = ['ESPRESSO', 'NIRPS']
 	txt = open(dirname+filename, 'w')
 	txt.write('## Target name \t RA \t DEC \t Obs. start date \t BJD at mid-exp \t P(hPa) \t T (K) \t Humidity (%) \t Humidity (ppm) \t Airmass \t Azimuth (deg) \t Elevation (deg) \t Obs. latitude (deg) \t Obs. longitude (deg) \t Obs. altitude (m) \t Barycentric velocity (km/s) \n')
-	txt.write('## BJD at mid-exp \t Phase \t Barycentric velocity (km/s) \n')
-	for i in range(len(BJD)):
-		txt.write(f'{BJD[i]:15.7f} \t {phases[i]:15.7f} \t {V_BERV[i]:15.4f}\n')
 	for i,fname in enumerate(files):
 		f = pyfits.open(fname)
 		hdr = f[0].header
@@ -867,6 +864,7 @@ def get_molecfit_models(folders):
 		print(i, fold.split('/')[-1], date_formatted)
 
 def create_molecfit_cube(files):
+	dd = '/media/marceloaron/New Volume/PhD/thesis_work/molecfit/'
 	files = glob.glob(dd+'organised_results/*.txt')
 	files.sort()
 	flux_cube = np.empty((28,0,4080))

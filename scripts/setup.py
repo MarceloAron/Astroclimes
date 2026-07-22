@@ -12,14 +12,14 @@ from subprocess import call
 import main
 import funcs
 import objects
-from additional_scripts import go_over_main_mcmc
+#from additional_scripts import go_over_main_mcmc
 
 '''
 	Setup script for finding the best-fit molecular abundance values with Astroclimes
 '''
 
 ## Specify number of CPUs to use
-n_CPUs = 1
+n_CPUs = 6
 
 ## Define your home directory
 home_directory = '/home/Astroclimes/'
@@ -136,4 +136,5 @@ main.run_main(atm_profs_directory=atm_profs_directory,
 			  scale_profs=scale_profs, 
 			  vel_step=vel_step, 
 			  DMF_O2=DMF_O2,
+			  deep_line_threshold=deep_line_threshold,
 			  n_CPUs=n_CPUs)
