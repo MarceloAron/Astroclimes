@@ -51,6 +51,10 @@ atm_profs_directory = home_directory+'atmosphere_profiles/GGG2020/fp/al/'
 ## Define path for emission line spectra file
 filename_em_line_spec = home_directory+'auxiliary_files/skytable.fits'
 
+## Define path for directory containing the molecular cross sections 
+## (I recommend keeping the folder structure as it comes, otherwise you might have to change a few other lines in other scripts)
+opacities_directory = home_directory+'auxiliary_files/opacities/'
+
 ## Define the directory path to where observations are stored
 obs_directory = home_directory+'data/CARMENES/nir/tauboo/'
 
@@ -125,6 +129,7 @@ deep_line_threshold = 0.2
 ## Running main.py
 main.run_main(atm_profs_directory=atm_profs_directory,
 			  MCMC_directory=MCMC_directory,
+			  opacities_directory=opacities_directory,
 			  filename_mcmc_results=filename_mcmc_results, 
 			  filename_em_line_spec=filename_em_line_spec, 
 			  list_science_spectra=list_science_spectra, 

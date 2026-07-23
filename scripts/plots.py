@@ -30,7 +30,7 @@ rc('font',**{'family':'serif','serif':['Times']})
 rc('text', usetex=True)
 
 ## Define your home directory
-home_directory = '/home/marceloaron/MarceloAron/PhD/thesis_work/Astroclimes/'
+home_directory = './'
 
 ## Define default directory where plots will be saved
 save_directory = home_directory+'plots/'

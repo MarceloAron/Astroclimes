@@ -415,11 +415,11 @@ def regrid_wavelength(lam, vel_step):
 
 	return w
 
-def get_cross_secs_dic(molecs, lam_ranges, vel_step):
+def get_cross_secs_dic(molecs, lam_ranges, vel_step, opacities_directory):
 	molecs_cross_secs = {}
 
 	for molec in molecs:
-		f = h5py.File(home_directory+'auxiliary_files/opacities/lowT/'+molec.lower()+'.hdf5')
+		f = h5py.File(opacities_directory+'lowT/'+molec.lower()+'.hdf5')
 		cross_secs = f[molec.lower()]['cross_sec'][:]	# Cross section, in log(m^2/molecule)
 		P = f[molec.lower()]['P'][:]					# Pressure, in log(Pa)
 		T = f[molec.lower()]['T'][:]					# Temperature, in K
@@ -480,10 +480,10 @@ def get_spectra(molecs, Xs_atm, tau_each_X):
 	
 	return tau
 
-def get_cia_dict(lam, molecs):
+def get_cia_dict(lam, molecs, opacities_directory):
 	molecs_cias = {}
 	for molec in molecs:
-		fs = glob.glob(home_directory+f'auxiliary_files/opacities/cia/{molec}/*')
+		fs = glob.glob(opacities_directory+f'cia/{molec}/*')
 		fs.sort()
 		molecs_cias[molec] = {}
 		molecs_cias[molec]['Ts'] = {}

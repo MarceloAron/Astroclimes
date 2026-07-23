@@ -240,7 +240,7 @@ def get_obs_cube(nord, nwav, filenames_spectra, instrument='CARMENES', generate=
 
 		return all_lam, all_spec
 
-def get_mod_cube(nord, nwav, filenames_spectra, MCMC_directory, atm_profs_directory, filename_mcmc_results, molecs, molecs_for_cia, instrument='CARMENES', R_instrument=80400, generate=True, save_dirname='../', save_spec_mod_filename='all_spec_mod'):
+def get_mod_cube(nord, nwav, filenames_spectra, MCMC_directory, atm_profs_directory, opacities_directory, filename_mcmc_results, molecs, molecs_for_cia, instrument='CARMENES', R_instrument=80400, generate=True, save_dirname='../', save_spec_mod_filename='all_spec_mod'):
 	if generate:
 		ground_CO2, u_ground_CO2, ground_CH4, u_ground_CH4, ground_H2O, u_ground_H2O, ground_O2, u_ground_O2, X_CO2, u_X_CO2, X_CH4, u_X_CH4, X_H2O, u_X_H2O = np.loadtxt(filename_mcmc_results, usecols=(1,2,3,4,5,6,7,8,11,12,13,14,15,16), unpack=True)
 
@@ -258,7 +258,7 @@ def get_mod_cube(nord, nwav, filenames_spectra, MCMC_directory, atm_profs_direct
 		## Getting the information from the cross-section files
 		vel_step = 1.0 					# This is the velocity step (in km/s) to convert the wavelength distribution
 		R_regrid = (c*1e-3)/vel_step	# Resolution of our regridded model 
-		molecs_cross_secs = funcs.get_cross_secs_dic(molecs, lam_ranges, vel_step)
+		molecs_cross_secs = funcs.get_cross_secs_dic(molecs, lam_ranges, vel_step, opacities_directory)
 
 		all_spec_mod = np.empty((nord,0,nwav))
 
@@ -279,7 +279,7 @@ def get_mod_cube(nord, nwav, filenames_spectra, MCMC_directory, atm_profs_direct
 
 			## Getting the information from the CIA files
 			lam = molecs_cross_secs['CO2']['lam']
-			molecs_cias = funcs.get_cia_dict(lam, molecs_for_cia)
+			molecs_cias = funcs.get_cia_dict(lam, molecs_for_cia, opacities_directory)
 
 			## Interpolating the CIA
 			int_cias = funcs.interpolate_cia(P_atm, T_atm, hgt_atm, molecs_for_cia, molecs_cias, airmass)

@@ -33,6 +33,10 @@ home_directory = '/media/marceloaron/New Volume/PhD/thesis_work/'
 ## the vertical/, vmrs-vertical/ and maps-vertical/ directories are
 atm_profs_directory = home_directory+'atmosphere_profiles/GGG2020/fp/al/'
 
+## Define path for directory containing the molecular cross sections 
+## (I recommend keeping the folder structure as it comes, otherwise you might have to change a few other lines in other scripts)
+opacities_directory = home_directory+'auxiliary_files/opacities/'
+
 ## Define the directory path to where observations are stored
 obs_directory = home_directory+'data/CARMENES/nir/tauboo/'
 
@@ -214,7 +218,7 @@ for i,night in enumerate(nights):
 
 	## This creates the model spectra cube, if not already existent (this step takes a while, but only needs to be done once)
 	if not os.path.isfile(main_retrv_exo_directory+f'all_spec_mod_{night}.npy'):
-		all_spec_mod = funcs_telrem.get_mod_cube(n_orders[i], n_pixels[i], lists_science_spectra[i], MCMC_directories[i], atm_profs_directory, filenames_mcmc_results[i], molecs, molecs_for_cia, generate=True, save_dirname=main_retrv_exo_directory, save_spec_mod_filename=f'all_spec_mod_{night}.npy')
+		all_spec_mod = funcs_telrem.get_mod_cube(n_orders[i], n_pixels[i], lists_science_spectra[i], MCMC_directories[i], atm_profs_directory, opacities_directory, filenames_mcmc_results[i], molecs, molecs_for_cia, generate=True, save_dirname=main_retrv_exo_directory, save_spec_mod_filename=f'all_spec_mod_{night}.npy')
 
 ## Decide if you want to make certain optional plots
 make_gen_cube_plots = False

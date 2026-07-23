@@ -44,6 +44,10 @@ filename_mcmc_results = MCMC_directory+'results_mcmc.txt'
 ## the vertical/, vmrs-vertical/ and maps-vertical/ directories are
 atm_profs_directory = home_directory+'atmosphere_profiles/GGG2020/fp/al/'
 
+## Define path for directory containing the molecular cross sections 
+## (I recommend keeping the folder structure as it comes, otherwise you might have to change a few other lines in other scripts)
+opacities_directory = home_directory+'auxiliary_files/opacities/'
+
 ## Define the directory path to where observations are stored
 obs_directory = home_directory+'data/CARMENES/nir/tauboo/'
 
@@ -198,7 +202,7 @@ if not os.path.isfile(main_inj_rec_directory+'all_lam.npy') or not os.path.isfil
 
 ## This creates the model spectra cube, if not already existent (this step takes a while, but only needs to be done once)
 if not os.path.isfile(main_inj_rec_directory+'all_spec_mod.npy'):
-	all_spec_mod = funcs_telrem.get_mod_cube(n_orders, n_pixels, list_science_spectra, MCMC_directory, atm_profs_directory, filename_mcmc_results, molecs, molecs_for_cia, instrument=instrument, R_instrument=R_instrument, generate=True, save_dirname=main_inj_rec_directory)
+	all_spec_mod = funcs_telrem.get_mod_cube(n_orders, n_pixels, list_science_spectra, MCMC_directory, atm_profs_directory, opacities_directory, filename_mcmc_results, molecs, molecs_for_cia, instrument=instrument, R_instrument=R_instrument, generate=True, save_dirname=main_inj_rec_directory)
 
 ## Specify filenames where the planet model wavelength and flux are kept (models here come from GENESIS code from Gandhi & Madhusudhan 2017)
 filename_planet_lam = home_directory+'telluric_removal/planet_models/lam.txt' 							# Wavelength in micron

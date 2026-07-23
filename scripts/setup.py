@@ -22,10 +22,10 @@ import objects
 n_CPUs = 6
 
 ## Define your home directory
-home_directory = '/home/Astroclimes/'
+home_directory = os.environ.get('HOME')+'/Astroclimes/'
 
 ## Define the directory where the MCMC results will be stored
-MCMC_directory = home_directory+'MCMC_results/tauboo/2018_03_26/'
+MCMC_directory = home_directory+'my_cool_results/'
 
 ## Checking if MCMC directory already exists and if not, creating it
 if not os.path.isdir(MCMC_directory):
@@ -48,8 +48,12 @@ atm_profs_directory = home_directory+'atmosphere_profiles/GGG2020/fp/al/'
 ## Define path for emission line spectra file
 filename_em_line_spec = home_directory+'auxiliary_files/skytable.fits'
 
+## Define path for directory containing the molecular cross sections 
+## (I recommend keeping the folder structure as it comes, otherwise you might have to change a few other lines in other scripts)
+opacities_directory = home_directory+'auxiliary_files/opacities/'
+
 ## Define the directory path to where observations are stored
-obs_directory = home_directory+'data/CARMENES/nir/tauboo/'
+obs_directory = home_directory+'data/CARMENES/'
 
 ## Creating list of the observation file names to be analysed
 ## Here we are specifying that we only want the NIR files from fibre A, which is a syntax specific to CARMENES, 
@@ -119,6 +123,7 @@ deep_line_threshold = 0.2
 ## Running main.py
 main.run_main(atm_profs_directory=atm_profs_directory,
 			  MCMC_directory=MCMC_directory,
+			  opacities_directory=opacities_directory,
 			  filename_mcmc_results=filename_mcmc_results, 
 			  filename_em_line_spec=filename_em_line_spec, 
 			  list_science_spectra=list_science_spectra, 

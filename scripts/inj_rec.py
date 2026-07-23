@@ -6,7 +6,11 @@ from scipy import interpolate
 import os
 from subprocess import call
 import emcee
-from multiprocessing import Pool
+#from multiprocessing import Pool
+import multiprocessing as mp
+
+## For MacOS systems, apparently this is needed to avoid some pathing issues when using multiprocessing
+Pool = mp.get_context('fork').Pool
 
 # =====================================================================================
 # Scripts
@@ -38,7 +42,7 @@ def run_inj_rec(main_inj_rec_directory, filename_site_values, R_instrument, n_or
 		all_lam, all_spec = funcs_telrem.get_obs_cube(None, None, None, generate=False, save_dirname=main_inj_rec_directory)
 
 		## Unpacking the model spectra cube (no need to give any sensible arguments when generate=False, besides save_dirname and save_spec_mod_filename if file does not have default name)
-		all_spec_mod = funcs_telrem.get_mod_cube(None, None, None, None, None, None, None, None, generate=False, save_dirname=main_inj_rec_directory)
+		all_spec_mod = funcs_telrem.get_mod_cube(None, None, None, None, None, None, None, None, None, generate=False, save_dirname=main_inj_rec_directory)
 		#all_spec_mod = np.load(main_inj_rec_directory+'all_spec_mod_molecfit.npy', allow_pickle=True)
 		
 		## Creating a model planetary signal

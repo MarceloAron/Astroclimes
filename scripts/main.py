@@ -6,7 +6,11 @@ import os
 from subprocess import call
 import emcee
 import copy
-from multiprocessing import Pool
+#from multiprocessing import Pool
+import multiprocessing as mp
+
+## For MacOS systems, apparently this is needed to avoid some pathing issues when using multiprocessing
+Pool = mp.get_context('fork').Pool
 
 # =====================================================================================
 # Scripts
@@ -27,7 +31,7 @@ N_A = 6.022*1e23	# Avogadro constant, in molecules/mole
 c = 299792458		# Speed of light, in m/s
 DU = 2.69*1e20		# Dobson unit, in molecules/m^2
 
-def run_main(atm_profs_directory, MCMC_directory, filename_mcmc_results, filename_em_line_spec, list_science_spectra, include_stelmod, filename_stelmod_lam, filename_stelmod_spec, molecs, molecs_for_cia, free_molecs, spec_orders, instrument, R_instrument, stelpars, orbpars, scale_profs, vel_step, DMF_O2, deep_line_threshold, n_CPUs=1):
+def run_main(atm_profs_directory, MCMC_directory, opacities_directory, filename_mcmc_results, filename_em_line_spec, list_science_spectra, include_stelmod, filename_stelmod_lam, filename_stelmod_spec, molecs, molecs_for_cia, free_molecs, spec_orders, instrument, R_instrument, stelpars, orbpars, scale_profs, vel_step, DMF_O2, deep_line_threshold, n_CPUs=1):
 
 	R_regrid = (c*1e-3)/vel_step	# Resolution of our regridded model 
 	if include_stelmod:
@@ -131,14 +135,14 @@ def run_main(atm_profs_directory, MCMC_directory, filename_mcmc_results, filenam
 			np.savetxt(dirname+f'not_norm_spec_ord_{spec_orders[i]+1}.txt', np.vstack(at).T)
 
 		## Getting the information from the cross-section files
-		molecs_cross_secs = funcs.get_cross_secs_dic(molecs, merge_lam_ranges, vel_step)
+		molecs_cross_secs = funcs.get_cross_secs_dic(molecs, merge_lam_ranges, vel_step, opacities_directory)
 
 		## Interpolating the cross sections
 		int_cross_secs = funcs.interpolate_cross_secs(P_atm, T_atm, hgt_atm, molecs, molecs_cross_secs, airmass) 
 
 		## Getting the information from the CIA files
 		lam = molecs_cross_secs['CO2']['lam']
-		molecs_cias = funcs.get_cia_dict(lam, molecs_for_cia)
+		molecs_cias = funcs.get_cia_dict(lam, molecs_for_cia, opacities_directory)
 
 		## Interpolating the CIA
 		int_cias = funcs.interpolate_cia(P_atm, T_atm, hgt_atm, molecs_for_cia, molecs_cias, airmass)
