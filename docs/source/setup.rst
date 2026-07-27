@@ -26,6 +26,9 @@ Run to find best-fit molecular abundance values
 	:guilabel:`filename_em_line_spec` = 
 	file name (with path) of the model emission line spectra.
 
+	:guilabel:`opacities_directory` = 
+	path to subdirectory where molecular cross-sections are stored.
+
 	:guilabel:`obs_directory` = 
 	path to subdirectory where observations are stored.
 
@@ -57,7 +60,7 @@ Run to find best-fit molecular abundance values
 	list containing names of the molecules to be included in the modelling via line-by-line absorption.
 
 	:guilabel:`molecs_for_cia` = 
-	list containing the reaction pairs to be included in the modellign via collision-induced absorption (CIA).
+	list containing the reaction pairs to be included in the modelling via collision-induced absorption (CIA).
 
 	:guilabel:`stelpars` = 
 	Python object to store the stellar parameters. Here, the parameters needed are the star's projected rotational velocity :math:`vsini` and a linear limb-darkening coefficient :math:`\varepsilon`. The effective temperature :math:`T_\text{eff}`, surface gravity :math:`\log{g}` and metallicity FeH are not used in any of the calculations but are defined here for ease of access because they are needed to determine the best stellar model and limb darkening coefficient to use.
@@ -105,6 +108,9 @@ Run to carry out injection and recovery tests
 
 	:guilabel:`atm_profs_directory` = 
 	path to subdirectory where atmospheric profiles are stored.
+
+	:guilabel:`opacities_directory` = 
+	path to subdirectory where molecular cross-sections are stored.
 
 	:guilabel:`obs_directory` = 
 	path to subdirectory where observations are stored.
@@ -215,6 +221,9 @@ Run to search for a detection of a real atmospheric signal
 
 	:guilabel:`atm_profs_directory` = 
 	path to subdirectory where atmospheric profiles are stored.
+
+	:guilabel:`opacities_directory` = 
+	path to subdirectory where molecular cross-sections are stored.
 
 	:guilabel:`obs_directory` = 
 	path to subdirectory where observations are stored.
