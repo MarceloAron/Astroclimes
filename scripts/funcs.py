@@ -24,13 +24,6 @@ c = 299792458		# Speed of light, in m/s
 #DU = 2.69*1e16		# Dobson unit, in molecules/cm^2
 DU = 2.69*1e20		# Dobson unit, in molecules/m^2
 
-#home_directory = '/Users/marceloaronkeniger/PhD/thesis_work/Astroclimes/'
-#home_directory = '/home/marceloaron/MarceloAron/PhD/thesis_work/Astroclimes/'
-#home_directory = '/storage/astro2/phrgmq/Astroclimes/'
-home_directory = '/media/marceloaron/New Volume/PhD/thesis_work/'
-
-plots_directory = home_directory+'plots/'
-
 def get_spectral_data(filename, instrument='CARMENES', clean_NaNs=True):
 	'''
 	Unpack spectral data from a given instrument. By default, this function cleans the spectra of NaNs and infs
@@ -234,7 +227,7 @@ def rot_profile(Dv, vsini, eps):
 
 	return G
 
-def broaden_phoenix_spectra(lam, spec, vel_step=1, vsini=0, eps=0, plot_fig=False, dirname=plots_directory, filename='phoenix_broad'):
+def broaden_phoenix_spectra(lam, spec, vel_step=1, vsini=0, eps=0):
 	Dv = np.arange(-int(vsini)-5,int(vsini)+5+vel_step, step=vel_step)
 	Dv_fine = np.empty(0)
 	for i in range(len(Dv)):
@@ -607,7 +600,7 @@ def spec_handle(lam, lam_obs, int_cross_secs, int_cias, tau_rayleigh, tau_aeroso
 
 	return np.array(mod_to_obs_spec, dtype=object)
 
-def get_normalisation_mask(lam, lam_obs, int_cross_secs, int_cias, tau_rayleigh, tau_aerosol, Cn_atm, molecs, molecs_for_cia, R_regrid, R_obs, select_CO2_ground, select_H2O_ground, window_sizes, stellar_spectra, orders=[], plot_bool=False, filename='norm_mask', dirname=plots_directory):
+def get_normalisation_mask(lam, lam_obs, int_cross_secs, int_cias, tau_rayleigh, tau_aerosol, Cn_atm, molecs, molecs_for_cia, R_regrid, R_obs, select_CO2_ground, select_H2O_ground, window_sizes, stellar_spectra, orders=[], plot_bool=False, filename='norm_mask', dirname='./'):
 
 	## First I'll change the H2O and CO2 abundances to arbitrary values so that the lines are not too deep
 	## and the continuum baseline is not lowered by the vast number of lines
@@ -638,7 +631,7 @@ def get_normalisation_mask(lam, lam_obs, int_cross_secs, int_cias, tau_rayleigh,
 		
 	return norm_mask
 
-def normalise_spectra(lam, spec, norm_mask, window_sizes, orders=[], plot_bool=False, filename='norm', dirname=plots_directory):
+def normalise_spectra(lam, spec, norm_mask, window_sizes, orders=[], plot_bool=False, filename='norm', dirname='./'):
 	spec_norm = []
 	for i in range(len(spec)):
 		win = int(2*len(spec[i])*window_sizes[i] + 1)
